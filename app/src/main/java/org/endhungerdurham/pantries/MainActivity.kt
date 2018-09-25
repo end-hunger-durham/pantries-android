@@ -2,12 +2,13 @@ package org.endhungerdurham.pantries
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.FrameLayout
+import android.support.design.widget.TabLayout
+import android.support.v4.view.ViewPager
 import android.widget.LinearLayout
+import android.widget.TableLayout
 import android.widget.TextView
 import org.endhungerdurham.pantries.ItemFragment.OnListFragmentInteractionListener;
 import org.endhungerdurham.pantries.dummy.DummyContent
-import org.w3c.dom.Text
 
 /*import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,13 +22,19 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val viewPager: ViewPager = findViewById(R.id.viewpager)
+        viewPager.adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
+
+        val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
+        tabLayout.setupWithViewPager(viewPager)
+
         /*val mapFragment = fragmentManager
                 .findFragmentById(R.id.map) as MapFragment
         mapFragment.getMapAsync(this)*/
     }
 
     override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
-        val lview: FrameLayout = findViewById(R.id.list_container)
+        val lview: LinearLayout = findViewById(R.id.container)
         val myText: TextView = TextView(this)
         myText.setText(item?.details)
         lview.addView(myText)
