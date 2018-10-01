@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 
 
-import org.endhungerdurham.pantries.ItemFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.ItemsFragment.OnListFragmentInteractionListener
 import org.endhungerdurham.pantries.dummy.DummyContent.DummyItem
 
 import kotlinx.android.synthetic.main.fragment_item.view.*

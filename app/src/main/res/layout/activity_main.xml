@@ -16,8 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout-->
+
     <LinearLayout
-        android:id="@+id/container"
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -44,19 +45,4 @@
             android:layout_height="match_parent"
             android:background="@android:color/white" />
     </LinearLayout>
-    <!--fFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
-        <fragment android:name="org.endhungerdurham.pantries.ItemFragment"
-            android:id="@+id/list_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-        <ragment
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout-->
 </android.support.design.widget.CoordinatorLayout>
