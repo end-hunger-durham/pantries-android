@@ -20,7 +20,6 @@ import org.endhungerdurham.pantries.dummy.DummyContent.DummyItem
 class ItemsFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
-    private var mOnClickListener: View.OnClickListener? = View.OnClickListener {  }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

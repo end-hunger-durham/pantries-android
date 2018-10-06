@@ -3,6 +3,7 @@ package org.endhungerdurham.pantries
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import org.endhungerdurham.pantries.ItemsFragment.OnListFragmentInteractionListener;
 import org.endhungerdurham.pantries.dummy.DummyContent
@@ -31,14 +32,9 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
-        /*val lview: LinearLayout = findViewById(R.id.container)
-        val myText: TextView = TextView(this)
-        myText.setText(item?.details)
-        lview.addView(myText)*/
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        val fragment = DetailsFragment()
-        fragmentTransaction.replace(R.id.fragment_container, fragment)
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment())
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }

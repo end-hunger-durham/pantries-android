@@ -15,7 +15,7 @@ class MyFragmentPagerAdapter(fm: FragmentManager, private val context: Context) 
 
     override fun getItem(position: Int): Fragment {
         when (position) {
-            0 -> return ItemsFragment.newInstance()
+            0 -> return PantriesFragment.newInstance()
             1 -> return MapFragment.newInstance()
             else -> throw RuntimeException("Invalid tab position: " + position)
         }

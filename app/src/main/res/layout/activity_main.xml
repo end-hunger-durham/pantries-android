@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!--FrameLayout
-        android:id="@+id/map_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:id="@+id/map"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout-->
-
     <LinearLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
