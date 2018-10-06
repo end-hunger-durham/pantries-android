@@ -7,23 +7,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import org.endhungerdurham.pantries.dummy.DummyContent
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+// TODO: Update parameters with actual pantry data
+private const val ARG_ITEM_NUMBER = "item_number"
 
-/**
- * A simple [Fragment] subclass.
- *
- */
 class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return TextView(activity).apply {
-            setText(R.string.hello_blank_fragment)
-        }
+        val view = inflater.inflate(R.layout.fragment_details, container, false)
+        val detailsText = view.findViewById<TextView>(R.id.details_text)
+        detailsText.setText(arguments?.getString(ARG_ITEM_NUMBER))
+        return view
     }
 
+    companion object {
+        @JvmStatic
+        fun newInstance(item: DummyContent.DummyItem?) : DetailsFragment {
+            val args = Bundle()
+            args.putString(ARG_ITEM_NUMBER, item.toString())
+            val fragment = DetailsFragment()
+            fragment.setArguments(args)
+            return fragment
+        }
+    }
 }

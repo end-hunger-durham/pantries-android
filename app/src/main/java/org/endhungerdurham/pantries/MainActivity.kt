@@ -8,12 +8,6 @@ import android.support.v4.view.ViewPager
 import org.endhungerdurham.pantries.ItemsFragment.OnListFragmentInteractionListener;
 import org.endhungerdurham.pantries.dummy.DummyContent
 
-/*import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.MapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions*/
-
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,23 +19,23 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
         tabLayout.setupWithViewPager(viewPager)
-
-        /*val mapFragment = fragmentManager
-                .findFragmentById(R.id.map) as MapFragment
-        mapFragment.getMapAsync(this)*/
     }
 
     override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment())
+        fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
 
-    /*override fun onMapReady(map: GoogleMap) {
-        map.addMarker(MarkerOptions()
-                .position(LatLng(0.0, 0.0))
-                .title("Marker"))
-    }*/
+    // Ignore back stack if viewing the map
+    override fun onBackPressed() {
+        val viewPager = findViewById<ViewPager>(R.id.viewpager)
+
+        when (viewPager.currentItem) {
+            0 -> super.onBackPressed()
+            else -> finish()
+        }
+    }
 }

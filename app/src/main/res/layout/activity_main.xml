@@ -7,7 +7,6 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -18,7 +17,7 @@
             app:tabMode="fixed" >
 
             <android.support.design.widget.TabItem
-                android:text="@string/list"
+                android:text="@string/pantries"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 

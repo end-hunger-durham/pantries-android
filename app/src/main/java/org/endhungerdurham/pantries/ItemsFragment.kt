@@ -33,8 +33,6 @@ class ItemsFragment : Fragment() {
             }
         }
 
-        //https://stackoverflow.com/questions/7723964/replace-fragment-inside-a-viewpager
-
         return view
     }
 
@@ -64,14 +62,7 @@ class ItemsFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
+        // TODO: Update argument type and name with actual pantry data
         fun onListFragmentInteraction(item: DummyItem?)
-    }
-
-    companion object {
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance() = ItemsFragment()
     }
 }
