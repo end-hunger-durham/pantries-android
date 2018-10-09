@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Pantries</string>
+    <string name="pantries">Pantries</string>
+    <string name="map">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_map_fragment">Hello map fragment</string>
 </resources>
