@@ -15,14 +15,19 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            resValue 'string', "api_key", pantries_android_maps_key
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue 'string', "api_key", pantries_android_maps_key
         }
     }
 }
 
 ext {
+    playServicesVersion = '16.0.0'
     supportLibVersion = '27.1.1'
 }
 
@@ -34,9 +39,9 @@ dependencies {
     implementation "com.android.support:design:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
     implementation "com.android.support:support-v4:${supportLibVersion}"
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation "com.google.android.gms:play-services-location:${playServicesVersion}"
+    implementation "com.google.android.gms:play-services-maps:${playServicesVersion}"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    //implementation 'com.google.android.gms:play-services:12.0.1'
 }

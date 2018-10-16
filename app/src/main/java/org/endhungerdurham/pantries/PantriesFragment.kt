@@ -12,10 +12,12 @@ class PantriesFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.frament_pantries, container, false)
 
-        // Initialize pantries fragment with list of pantries
-        val transaction = fragmentManager!!.beginTransaction()
-        transaction.replace(R.id.pantries_frame, ItemsFragment())
-        transaction.commit()
+        // Initialize pantries fragment with pantries list if fresh instance
+        if (savedInstanceState == null) {
+            val transaction = fragmentManager?.beginTransaction()
+            transaction?.replace(R.id.pantries_frame, ItemsFragment())
+            transaction?.commit()
+        }
 
         return view
     }
