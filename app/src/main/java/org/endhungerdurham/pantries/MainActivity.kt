@@ -6,7 +6,6 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import org.endhungerdurham.pantries.ItemsFragment.OnListFragmentInteractionListener;
-import org.endhungerdurham.pantries.dummy.DummyContent
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
