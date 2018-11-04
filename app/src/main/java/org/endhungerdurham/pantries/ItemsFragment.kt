@@ -8,9 +8,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.json.JSON
+import kotlinx.serialization.serializer
 
-import org.endhungerdurham.pantries.dummy.DummyContent
-import org.endhungerdurham.pantries.dummy.DummyContent.DummyItem
+import java.net.URL
 
 /**
  * A fragment representing a list of Items.
@@ -21,6 +24,13 @@ class ItemsFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
 
+    private fun fetchPantries(): List<Pantry> = runBlocking {
+        val json = async(Dispatchers.IO) {
+            URL(requireContext().getString(R.string.pantries_json_url)).readText()
+        }
+        JSON.parse(PantryList.serializer(), json.await()).pantries
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_items_list, container, false)
@@ -29,7 +39,7 @@ class ItemsFragment : Fragment() {
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
-                adapter = MyItemRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                adapter = MyItemRecyclerViewAdapter(fetchPantries(), listener)
             }
         }
 
@@ -62,7 +72,6 @@ class ItemsFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name with actual pantry data
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction(item: Pantry?)
     }
 }

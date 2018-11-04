@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+    override fun onListFragmentInteraction(item: Pantry?) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
