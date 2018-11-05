@@ -8,27 +8,44 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import java.net.URL
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.JSON
 import kotlinx.serialization.serializer
 
-import java.net.URL
+private const val ARG_PANTRY_LIST = "pantry_list"
 
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
  * [ItemsFragment.OnListFragmentInteractionListener] interface.
  */
-class ItemsFragment : Fragment() {
+class ItemsFragment : Fragment(), CoroutineScope {
 
     private var listener: OnListFragmentInteractionListener? = null
+    private var pantries: List<Pantry> ?= null
+    private var job: Job ?= null
 
-    private fun fetchPantries(): List<Pantry> = runBlocking {
-        val json = async(Dispatchers.IO) {
-            URL(requireContext().getString(R.string.pantries_json_url)).readText()
+    override val coroutineContext = Job() + Dispatchers.Main
+
+    suspend fun fetchPantries(): List<Pantry> {
+        return withContext(Dispatchers.IO) {
+            val json = URL(requireContext().getString(R.string.pantries_json_url)).readText()
+            JSON.parse(PantryList.serializer(), json).pantries
         }
-        JSON.parse(PantryList.serializer(), json.await()).pantries
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            pantries = savedInstanceState.getParcelableArrayList<Pantry>(ARG_PANTRY_LIST)?.toList()
+        } else {
+            job = launch {
+                pantries = fetchPantries()
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +56,10 @@ class ItemsFragment : Fragment() {
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = LinearLayoutManager(context)
-                adapter = MyItemRecyclerViewAdapter(fetchPantries(), listener)
+                launch {
+                    job?.join()
+                    adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList<Pantry>(), listener)
+                }
             }
         }
 
@@ -58,6 +78,11 @@ class ItemsFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList(ARG_PANTRY_LIST, ArrayList(pantries))
     }
 
     /**
