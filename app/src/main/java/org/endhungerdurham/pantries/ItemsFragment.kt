@@ -29,9 +29,11 @@ class ItemsFragment : Fragment(), CoroutineScope {
 
     override val coroutineContext = Job() + Dispatchers.Main
 
-    suspend fun fetchPantries(): List<Pantry> {
+    private suspend fun fetchPantries(): List<Pantry> {
         return withContext(Dispatchers.IO) {
-            val json = URL(requireContext().getString(R.string.pantries_json_url)).readText()
+            val json = async(Dispatchers.IO) {
+                URL(requireContext().getString(R.string.pantries_json_url)).readText()
+            }.await()
             JSON.parse(PantryList.serializer(), json).pantries
         }
     }
@@ -58,7 +60,7 @@ class ItemsFragment : Fragment(), CoroutineScope {
                 layoutManager = LinearLayoutManager(context)
                 launch {
                     job?.join()
-                    adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList<Pantry>(), listener)
+                    adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
                 }
             }
         }
