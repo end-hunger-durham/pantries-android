@@ -14,9 +14,9 @@ class DetailsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
-        val detailsText = view.findViewById<TextView>(R.id.address)
         val pantry = arguments?.getParcelable<Pantry>(ARG_PANTRY)
-        detailsText.setText(pantry?.address)
+        val detailsText = view.findViewById<TextView>(R.id.address)
+        detailsText.append("\n" + pantry?.address + pantry?.city)
         return view
     }
 

@@ -51,7 +51,7 @@ class ItemsFragment : Fragment(), CoroutineScope {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_items_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_list, container, false)
 
         // Set the adapter
         if (view is RecyclerView) {

@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import org.endhungerdurham.pantries.ItemsFragment.OnListFragmentInteractionListener
 
-import kotlinx.android.synthetic.main.fragment_item.view.*
+import kotlinx.android.synthetic.main.list_item.view.*
 
 class MyItemRecyclerViewAdapter(
         private val mValues: List<Pantry>,
@@ -27,7 +27,7 @@ class MyItemRecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_item, parent, false)
+                .inflate(R.layout.list_item, parent, false)
         return ViewHolder(view)
     }
 
