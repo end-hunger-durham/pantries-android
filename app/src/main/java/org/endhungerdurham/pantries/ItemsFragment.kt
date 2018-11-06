@@ -12,7 +12,6 @@ import java.net.URL
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.JSON
-import kotlinx.serialization.serializer
 
 private const val ARG_PANTRY_LIST = "pantry_list"
 
@@ -84,7 +83,7 @@ class ItemsFragment : Fragment(), CoroutineScope {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelableArrayList(ARG_PANTRY_LIST, ArrayList(pantries))
+        outState.putParcelableArrayList(ARG_PANTRY_LIST, pantries as ArrayList)
     }
 
     /**

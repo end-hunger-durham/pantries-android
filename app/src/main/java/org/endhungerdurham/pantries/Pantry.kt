@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 data class PantryList(val pantries: List<Pantry>)
 
 @Serializable
-data class Pantry(val organizations: String, val address: String, val city: String,
-                  val days: String, val hours: String,
-                  val phone: String, val info: String, val prereq: String,
+data class Pantry(val organizations: String?, val address: String?, val city: String?,
+                  val days: String?, val hours: String?,
+                  val phone: String?, val info: String?, val prereq: String?,
                   val latitude: Double, val longitude: Double) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
