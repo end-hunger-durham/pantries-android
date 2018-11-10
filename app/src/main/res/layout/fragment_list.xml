@@ -11,5 +11,5 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-    tools:context=".ItemsFragment"
+    tools:context=".ListFragment"
     tools:listitem="@layout/list_item" />

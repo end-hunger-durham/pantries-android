@@ -15,7 +15,7 @@ class PantriesFragment : Fragment() {
         // Initialize pantries fragment with pantries list if fresh instance
         if (savedInstanceState == null) {
             val transaction = fragmentManager?.beginTransaction()
-            transaction?.replace(R.id.pantries_frame, ItemsFragment())
+            transaction?.replace(R.id.pantries_frame, ListFragment())
             transaction?.commit()
         }
 

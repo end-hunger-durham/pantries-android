@@ -17,7 +17,7 @@ class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPa
         when (position) {
             0 -> return PantriesFragment()
             1 -> return MapFragment()
-            else -> throw RuntimeException("Invalid tab position: " + position)
+            else -> throw RuntimeException("Invalid tab position: ${position}")
         }
     }
 
