@@ -1,5 +1,7 @@
 package org.endhungerdurham.pantries
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.view.ViewGroup
@@ -13,23 +15,29 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-private val DEFAULT_ZOOM = 10.0f
+private val DEFAULT_ZOOM = 12.0f
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
 private val KEY_CAMERA_POSITION = "camera_position"
 private val KEY_LOCATION = "location"
 
+// TODO: Change icon color depending on whether it is open/closed
 class MapFragment : Fragment() {
     private var mFusedLocationProviderClient: FusedLocationProviderClient ?= null
     private var mLastLocation: LatLng ?= null
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
     private var mMapView: MapView ?= null
+    private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
+
         if (savedInstanceState != null) {
             mLastLocation = savedInstanceState.getParcelable(KEY_LOCATION)
             mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(savedInstanceState.getParcelable(KEY_CAMERA_POSITION)))
@@ -52,6 +60,15 @@ class MapFragment : Fragment() {
             if (mLastLocation == null) {
                 getDeviceLocation()
             }
+
+            model.getPantries().observe(this, Observer<List<Pantry>> { pantries ->
+                for (pantry in pantries ?: emptyList()) {
+                    mMap?.addMarker(MarkerOptions()
+                            .position(LatLng(pantry.latitude, pantry.longitude))
+                            .title(pantry.organizations)
+                            .alpha(0.75f))
+                }
+            })
         }
 
         return rootView

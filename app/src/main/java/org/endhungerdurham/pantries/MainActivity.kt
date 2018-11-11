@@ -5,8 +5,7 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
-import org.endhungerdurham.pantries.ItemsFragment.OnListFragmentInteractionListener;
-import org.endhungerdurham.pantries.dummy.DummyContent
+import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListener;
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
@@ -21,7 +20,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         tabLayout.setupWithViewPager(viewPager)
     }
 
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+    override fun onListFragmentInteraction(item: Pantry?) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

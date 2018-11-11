@@ -1,37 +1,46 @@
 package org.endhungerdurham.pantries
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import org.endhungerdurham.pantries.dummy.DummyContent
-import org.endhungerdurham.pantries.dummy.DummyContent.DummyItem
-
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
- * [ItemsFragment.OnListFragmentInteractionListener] interface.
+ * [ListFragment.OnListFragmentInteractionListener] interface.
  */
-class ItemsFragment : Fragment() {
+// TODO: Sort by distance
+class ListFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
+    private lateinit var model: PantriesViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_items_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_list, container, false) as RecyclerView
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = LinearLayoutManager(context)
-                adapter = MyItemRecyclerViewAdapter(DummyContent.ITEMS, listener)
-            }
+        with(view) {
+            addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
+            layoutManager = LinearLayoutManager(context)
         }
+
+        model.getPantries().observe(this, Observer<List<Pantry>> { pantries ->
+            view.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
+        })
 
         return view
     }
@@ -41,7 +50,7 @@ class ItemsFragment : Fragment() {
         if (context is OnListFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
+            throw RuntimeException("${context} must implement OnListFragmentInteractionListener")
         }
     }
 
@@ -62,7 +71,6 @@ class ItemsFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name with actual pantry data
-        fun onListFragmentInteraction(item: DummyItem?)
+        fun onListFragmentInteraction(item: Pantry?)
     }
 }

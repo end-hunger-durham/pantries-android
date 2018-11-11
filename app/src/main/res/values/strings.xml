@@ -1,8 +1,10 @@
 <resources>
+    <string name="address">Address</string>
     <string name="app_name">Pantries</string>
-    <string name="pantries">Pantries</string>
+    <string name="availability">Availability</string>
+    <string name="info">Additional Info</string>
     <string name="map">Map</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_map_fragment">Hello map fragment</string>
+    <string name="pantries">Pantries</string>
+    <string name="pantries_json_url">https://raw.githubusercontent.com/end-hunger-durham/data-importer/master/pantries.json</string>
+    <string name="qualifications">Qualifications</string>
 </resources>
