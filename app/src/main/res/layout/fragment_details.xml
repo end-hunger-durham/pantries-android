@@ -7,13 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".DetailsFragment">
 
+    <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/liteMapView"
+        android:layout_width="match_parent"
+        android:layout_height="175dp"
+        map:layout_constraintDimensionRatio="w,1:1"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="parent"
+        map:liteMode="true"
+        map:mapType="normal" />
+
     <TextView
         android:id="@+id/address"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="32dp"
         android:text="@string/address"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/liteMapView" />
 
     <TextView
         android:id="@+id/address_field"
