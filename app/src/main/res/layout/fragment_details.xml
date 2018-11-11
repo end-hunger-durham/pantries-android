@@ -16,13 +16,29 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/address_field"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/address" />
+
+    <TextView
         android:id="@+id/avaialability"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
         android:text="@string/availability"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address" />
+        app:layout_constraintTop_toBottomOf="@+id/address_field" />
+
+    <TextView
+        android:id="@+id/availability_field"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avaialability" />
 
     <TextView
         android:id="@+id/qualifications"
@@ -31,7 +47,15 @@
         android:layout_marginTop="32dp"
         android:text="@string/qualifications"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avaialability" />
+        app:layout_constraintTop_toBottomOf="@+id/availability_field" />
+
+    <TextView
+        android:id="@+id/qualifications_field"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/qualifications" />
 
     <TextView
         android:id="@+id/info"
@@ -40,5 +64,13 @@
         android:layout_marginTop="32dp"
         android:text="@string/info"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/qualifications" />
+        app:layout_constraintTop_toBottomOf="@+id/qualifications_field" />
+
+    <TextView
+        android:id="@+id/info_field"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/info" />
 </android.support.constraint.ConstraintLayout>

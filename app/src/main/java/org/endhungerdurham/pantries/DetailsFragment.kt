@@ -22,17 +22,17 @@ class DetailsFragment : Fragment() {
     }
 
     private fun fillDetails(view: View, pantry: Pantry?) {
-        val addressText = view.findViewById<TextView>(R.id.address)
-        addressText.append("\n" + pantry?.address + pantry?.city)
+        val addressText = view.findViewById<TextView>(R.id.address_field)
+        addressText.append("${pantry?.address} ${pantry?.city}")
 
-        val avaialabilityText = view.findViewById<TextView>(R.id.avaialability)
-        avaialabilityText.append("\n" + pantry?.days + pantry?.hours)
+        val avaialabilityText = view.findViewById<TextView>(R.id.availability_field)
+        avaialabilityText.append("${pantry?.days} ${pantry?.hours}")
 
-        val qualsText = view.findViewById<TextView>(R.id.qualifications)
-        qualsText.append("\n" + pantry?.prereq)
+        val qualsText = view.findViewById<TextView>(R.id.qualifications_field)
+        qualsText.append("${pantry?.prereq}")
 
-        val infoText = view.findViewById<TextView>(R.id.info)
-        infoText.append("\n" + pantry?.info)
+        val infoText = view.findViewById<TextView>(R.id.info_field)
+        infoText.append("${pantry?.info}")
     }
 
     companion object {
