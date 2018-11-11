@@ -9,12 +9,14 @@ import android.widget.TextView
 
 private const val ARG_PANTRY = "pantry"
 
+// TODO: prettier display of information
+// TODO: ACTION_DIAL intent for phone number
 class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
-        fillDetails(view, arguments?.getParcelable<Pantry>(ARG_PANTRY))
+        fillDetails(view, arguments?.getParcelable(ARG_PANTRY))
 
         return view
     }

@@ -17,13 +17,14 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-private val DEFAULT_ZOOM = 10.0f
+private val DEFAULT_ZOOM = 12.0f
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
 private val KEY_CAMERA_POSITION = "camera_position"
 private val KEY_LOCATION = "location"
 
+// TODO: Change icon color depending on whether it is open/closed
 class MapFragment : Fragment() {
     private var mFusedLocationProviderClient: FusedLocationProviderClient ?= null
     private var mLastLocation: LatLng ?= null
@@ -64,7 +65,8 @@ class MapFragment : Fragment() {
                 for (pantry in pantries ?: emptyList()) {
                     mMap?.addMarker(MarkerOptions()
                             .position(LatLng(pantry.latitude, pantry.longitude))
-                            .title(pantry.organizations))
+                            .title(pantry.organizations)
+                            .alpha(0.75f))
                 }
             })
         }
