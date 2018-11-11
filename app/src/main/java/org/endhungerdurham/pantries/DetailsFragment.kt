@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
@@ -22,6 +23,9 @@ class DetailsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
+
+        val phone: Button = view.findViewById(R.id.phone)
+        phone.text = pantry?.phone
 
         val map = view.findViewById(R.id.liteMapView) as? MapView
         map?.onCreate(savedInstanceState)
