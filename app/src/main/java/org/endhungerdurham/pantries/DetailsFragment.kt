@@ -15,9 +15,8 @@ import android.content.Intent
 import android.net.Uri
 
 private const val ARG_PANTRY = "pantry"
+private val DEFAULT_ZOOM = 16.0f
 
-// TODO: prettier display of information
-// TODO: ACTION_DIAL intent for phone number
 class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +38,7 @@ class DetailsFragment : Fragment() {
         map?.getMapAsync {
             pantry?.let { pantry ->
                 val pos = LatLng(pantry.latitude, pantry.longitude)
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15.0f))
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
                 it.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
             }
         }
