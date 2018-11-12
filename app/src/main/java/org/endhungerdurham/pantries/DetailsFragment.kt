@@ -5,18 +5,45 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import android.content.Intent
+import android.net.Uri
 
 private const val ARG_PANTRY = "pantry"
+private val DEFAULT_ZOOM = 16.0f
 
-// TODO: prettier display of information
-// TODO: ACTION_DIAL intent for phone number
 class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
-        fillDetails(view, arguments?.getParcelable(ARG_PANTRY))
+
+        val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
+
+        val phone: Button = view.findViewById(R.id.phone)
+        pantry?.phone?.let { number ->
+            phone.text = number
+            phone.setOnClickListener{
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+            }
+        }
+
+        val map = view.findViewById(R.id.liteMapView) as? MapView
+        map?.onCreate(savedInstanceState)
+        map?.getMapAsync {
+            pantry?.let { pantry ->
+                val pos = LatLng(pantry.latitude, pantry.longitude)
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
+                it.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
+            }
+        }
+
+        fillDetails(view, pantry)
 
         return view
     }

@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 
 /**
  * A fragment representing a list of Items.
@@ -31,15 +32,20 @@ class ListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_list, container, false) as RecyclerView
+        val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        with(view) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list)
+
+        with(recyclerView) {
             addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
             layoutManager = LinearLayoutManager(context)
         }
 
         model.getPantries().observe(this, Observer<List<Pantry>> { pantries ->
-            view.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
+            val pb = view.findViewById<ProgressBar>(R.id.pbLoading)
+            pb.visibility = ProgressBar.GONE
+
+            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
         })
 
         return view

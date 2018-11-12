@@ -10,9 +10,9 @@
     <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/liteMapView"
-        android:layout_width="match_parent"
-        android:layout_height="175dp"
-        map:layout_constraintBottom_toTopOf="@+id/phone"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintDimensionRatio="1:1"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent"
@@ -26,11 +26,11 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/address"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/address_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/phone" />
 
     <TextView
@@ -40,10 +40,11 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textIsSelectable="true"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/avaialability"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.974"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/address" />
 
     <TextView
@@ -53,11 +54,11 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/availability"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/availability_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/address_field" />
 
     <TextView
@@ -67,10 +68,10 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textIsSelectable="true"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/qualifications"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/avaialability" />
 
     <TextView
@@ -80,11 +81,11 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/qualifications"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/qualifications_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/availability_field" />
 
     <TextView
@@ -94,10 +95,10 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textIsSelectable="true"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/qualifications" />
 
     <TextView
@@ -107,11 +108,11 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/info"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/info_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/qualifications_field" />
 
     <TextView
@@ -121,10 +122,10 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:textIsSelectable="true"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
         app:layout_constraintTop_toBottomOf="@+id/info" />
 
     <Button
@@ -140,6 +141,6 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/liteMapView" />
+        app:layout_constraintStart_toEndOf="@+id/liteMapView"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
