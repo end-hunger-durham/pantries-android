@@ -11,6 +11,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import android.content.Intent
+import android.net.Uri
 
 private const val ARG_PANTRY = "pantry"
 
@@ -25,7 +27,12 @@ class DetailsFragment : Fragment() {
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
 
         val phone: Button = view.findViewById(R.id.phone)
-        phone.text = pantry?.phone
+        pantry?.phone?.let { number ->
+            phone.text = number
+            phone.setOnClickListener{
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+            }
+        }
 
         val map = view.findViewById(R.id.liteMapView) as? MapView
         map?.onCreate(savedInstanceState)
