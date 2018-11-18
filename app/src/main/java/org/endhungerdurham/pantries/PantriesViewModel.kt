@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.JSON
+import java.io.IOException
 import java.net.URL
 
 class PantriesViewModel: ViewModel() {
@@ -12,10 +13,15 @@ class PantriesViewModel: ViewModel() {
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    private suspend fun fetchPantries(): List<Pantry> {
+    private suspend fun fetchPantries(): List<Pantry>? {
         return withContext(Dispatchers.IO) {
-            val json = URL("https://raw.githubusercontent.com/end-hunger-durham/data-importer/master/pantries.json").readText()
-            JSON.parse(PantryList.serializer(), json).pantries
+            try {
+                val json = URL("https://raw.githubusercontent.com/end-hunger-durham/data-importer/master/pantries.json").readText()
+                JSON.parse(PantryList.serializer(), json).pantries
+            } catch (e: IOException) {
+                //TODO: Retry (https://stackoverflow.com/a/47525583)
+                null
+            }
         }
     }
 
