@@ -5,7 +5,13 @@ import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
+import android.view.Menu
 import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListener
+import android.support.v4.view.MenuItemCompat
+import android.support.v7.widget.SearchView
+import android.view.MenuInflater
+
+
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
@@ -36,5 +42,28 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             0 -> super.onBackPressed()
             else -> finish()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // perform query here
+
+                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
+                // see https://code.google.com/p/android/issues/detail?id=24599
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+        })
+        return super.onCreateOptionsMenu(menu)
     }
 }
