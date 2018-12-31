@@ -10,7 +10,7 @@ import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListen
 import kotlinx.android.synthetic.main.list_item.view.*
 
 class MyItemRecyclerViewAdapter(
-        private val mValues: List<Pantry>,
+        private val mPantries: List<Pantry>,
         private val mListener: OnListFragmentInteractionListener?)
     : RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder>() {
 
@@ -32,7 +32,7 @@ class MyItemRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues[position]
+        val item = mPantries[position]
         holder.mContentView.text = item.organizations
 
         with(holder.mView) {
@@ -41,7 +41,7 @@ class MyItemRecyclerViewAdapter(
         }
     }
 
-    override fun getItemCount(): Int = mValues.size
+    override fun getItemCount(): Int = mPantries.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         val mContentView: TextView = mView.content

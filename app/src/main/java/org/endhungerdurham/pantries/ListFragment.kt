@@ -9,9 +9,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ProgressBar
 
 /**
@@ -27,7 +25,7 @@ class ListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
+        model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,11 +39,15 @@ class ListFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
         }
 
-        model.getPantries().observe(this, Observer<List<Pantry>> { pantries ->
+        model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
             val pb = view.findViewById<ProgressBar>(R.id.pbLoading)
             pb.visibility = ProgressBar.GONE
 
-            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
+            if (pantries != null) {
+                recyclerView.adapter = MyItemRecyclerViewAdapter(pantries, listener)
+            } else {
+                // TODO: Retry loading
+            }
         })
 
         return view

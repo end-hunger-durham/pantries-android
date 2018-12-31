@@ -1,19 +1,19 @@
 package org.endhungerdurham.pantries
 
+import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
-import android.view.Menu
-import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListener
-import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.SearchView
-import android.view.MenuInflater
-
-
+import android.view.Menu
+import android.view.MenuItem
+import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListener
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
+
+    private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
         tabLayout.setupWithViewPager(viewPager)
+
+        model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
     }
 
     override fun onListFragmentInteraction(item: Pantry?) {
@@ -44,15 +46,15 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
         val searchItem = menu.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                // perform query here
+                model.filterPantries(query)
 
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
@@ -64,6 +66,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
                 return false
             }
         })
+
         return super.onCreateOptionsMenu(menu)
     }
 }

@@ -4,13 +4,11 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v4.app.Fragment
 import android.os.Bundle
-import android.view.ViewGroup
-import android.view.LayoutInflater
-import android.view.View
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
+import android.view.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,7 +34,7 @@ class MapFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
+        model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
 
         if (savedInstanceState != null) {
             mLastLocation = savedInstanceState.getParcelable(KEY_LOCATION)
@@ -61,7 +59,9 @@ class MapFragment : Fragment() {
                 getDeviceLocation()
             }
 
-            model.getPantries().observe(this, Observer<List<Pantry>> { pantries ->
+            model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
+                mMap?.clear()
+
                 for (pantry in pantries ?: emptyList()) {
                     mMap?.addMarker(MarkerOptions()
                             .position(LatLng(pantry.latitude, pantry.longitude))

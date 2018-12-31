@@ -4,6 +4,8 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
 apply plugin: 'kotlinx-serialization'
 
 android {
@@ -12,6 +14,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     compileSdkVersion 28
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "org.endhungerdurham.pantries"
         minSdkVersion 19
