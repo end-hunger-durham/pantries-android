@@ -2,9 +2,6 @@ package org.endhungerdurham.pantries
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -13,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
+import android.view.*
 
 private const val ARG_PANTRY = "pantry"
 private val DEFAULT_ZOOM = 16.0f
@@ -45,7 +43,14 @@ class DetailsFragment : Fragment() {
 
         fillDetails(view, pantry)
 
+        setHasOptionsMenu(true)
+
         return view
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu?.clear()
     }
 
     private fun fillDetails(view: View, pantry: Pantry?) {
@@ -60,6 +65,15 @@ class DetailsFragment : Fragment() {
 
         val infoText = view.findViewById<TextView>(R.id.info_field)
         infoText.append("${pantry?.info}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        requireActivity().invalidateOptionsMenu()
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 
     companion object {

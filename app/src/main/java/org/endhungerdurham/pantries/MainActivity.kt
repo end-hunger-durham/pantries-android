@@ -8,12 +8,14 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.SearchView
 import android.view.Menu
-import android.view.MenuItem
 import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListener
+
+val KEY_SEARCH_QUERY = "search_query"
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     private lateinit var model: PantriesViewModel
+    private var mSearchQuery: String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,9 +28,20 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         tabLayout.setupWithViewPager(viewPager)
 
         model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
+
+        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
     }
 
     override fun onListFragmentInteraction(item: Pantry?) {
+        /*menuInflater.inflate(R.menu.main_menu, mMenu)
+        val searchItem = mMenu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        //searchView.isIconified = true
+        //searchView.clearFocus()
+        searchItem.collapseActionView()
+        searchItem.isVisible = false*/
+
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -63,10 +76,32 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                return false
+                mSearchQuery = newText
+                model.filterPantries(newText)
+                return true
             }
         })
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+
+        if (mSearchQuery != null) {
+            searchView.post {
+                searchView.isIconified = true
+                searchView.onActionViewExpanded()
+                searchView.setQuery(mSearchQuery, false)
+            }
+        }
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        outState?.putString(KEY_SEARCH_QUERY, mSearchQuery)
+        super.onSaveInstanceState(outState)
     }
 }
