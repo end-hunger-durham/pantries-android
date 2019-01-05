@@ -22,26 +22,25 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         setContentView(R.layout.activity_main)
 
         val viewPager: ViewPager = findViewById(R.id.viewpager)
-        viewPager.adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
+        val adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
+        viewPager.adapter = adapter
+        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageSelected(p0: Int) {
+                if (supportFragmentManager.findFragmentById(R.id.pantries_frame) is DetailsFragment) {
+                    invalidateOptionsMenu()
+                }
+            }
+            override fun onPageScrollStateChanged(p0: Int) { }
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) { }
+        })
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
         tabLayout.setupWithViewPager(viewPager)
 
         model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
-
-        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
     }
 
     override fun onListFragmentInteraction(item: Pantry?) {
-        /*menuInflater.inflate(R.menu.main_menu, mMenu)
-        val searchItem = mMenu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-
-        //searchView.isIconified = true
-        //searchView.clearFocus()
-        searchItem.collapseActionView()
-        searchItem.isVisible = false*/
-
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -59,11 +58,13 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-        val searchItem = menu.findItem(R.id.action_search)
+        val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
+        mSearchQuery?.let {
+            searchView.setQuery(it, false)
+        }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -82,26 +83,16 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             }
         })
 
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-
-        if (mSearchQuery != null) {
-            searchView.post {
-                searchView.isIconified = true
-                searchView.onActionViewExpanded()
-                searchView.setQuery(mSearchQuery, false)
-            }
-        }
-
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         outState?.putString(KEY_SEARCH_QUERY, mSearchQuery)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
     }
 }

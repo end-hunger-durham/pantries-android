@@ -10,6 +10,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
+import android.support.v4.view.ViewPager
 import android.view.*
 
 private const val ARG_PANTRY = "pantry"
@@ -48,9 +49,13 @@ class DetailsFragment : Fragment() {
         return view
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
+    // Remove search menu item and clear any input
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpager)
+        if (viewPager.currentItem == 0) {
+            menu?.clear()
+        }
+        super.onPrepareOptionsMenu(menu)
     }
 
     private fun fillDetails(view: View, pantry: Pantry?) {
@@ -65,15 +70,6 @@ class DetailsFragment : Fragment() {
 
         val infoText = view.findViewById<TextView>(R.id.info_field)
         infoText.append("${pantry?.info}")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        requireActivity().invalidateOptionsMenu()
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     companion object {
