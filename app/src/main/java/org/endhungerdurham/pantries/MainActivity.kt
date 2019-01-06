@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     override fun onListFragmentInteraction(item: Pantry) {
-        item.address?.let {
+        item.address.let {
             model.filterPantries(it)
         }
 
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         val viewPager = findViewById<ViewPager>(R.id.viewpager)
 
         when (viewPager.currentItem) {
-            0 -> {
+            LIST_PAGE -> {
                 model.filterPantries("")
                 super.onBackPressed()
             }
