@@ -22,17 +22,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         setContentView(R.layout.activity_main)
 
         val viewPager: ViewPager = findViewById(R.id.viewpager)
-        val adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
-        viewPager.adapter = adapter
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
-            override fun onPageSelected(p0: Int) {
-                if (supportFragmentManager.findFragmentById(R.id.pantries_frame) is DetailsFragment) {
-                    invalidateOptionsMenu()
-                }
-            }
-            override fun onPageScrollStateChanged(p0: Int) { }
-            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) { }
-        })
+        viewPager.adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
         tabLayout.setupWithViewPager(viewPager)
@@ -40,7 +30,11 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
     }
 
-    override fun onListFragmentInteraction(item: Pantry?) {
+    override fun onListFragmentInteraction(item: Pantry) {
+        item.address?.let {
+            model.filterPantries(it)
+        }
+
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -53,12 +47,15 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         val viewPager = findViewById<ViewPager>(R.id.viewpager)
 
         when (viewPager.currentItem) {
-            0 -> super.onBackPressed()
+            0 -> {
+                model.filterPantries("")
+                super.onBackPressed()
+            }
             else -> finish()
         }
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
@@ -83,7 +80,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             }
         })
 
-        return super.onPrepareOptionsMenu(menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

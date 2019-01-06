@@ -49,13 +49,9 @@ class DetailsFragment : Fragment() {
         return view
     }
 
-    // Remove search menu item and clear any input
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpager)
-        if (viewPager.currentItem == 0) {
-            menu?.clear()
-        }
-        super.onPrepareOptionsMenu(menu)
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.clear()
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun fillDetails(view: View, pantry: Pantry?) {

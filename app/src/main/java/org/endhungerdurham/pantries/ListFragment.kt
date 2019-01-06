@@ -79,6 +79,6 @@ class ListFragment : Fragment() {
      * for more information.
      */
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Pantry?)
+        fun onListFragmentInteraction(item: Pantry)
     }
 }

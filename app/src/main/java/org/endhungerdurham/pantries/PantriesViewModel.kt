@@ -45,7 +45,11 @@ class PantriesViewModel: ViewModel() {
             mutablePantries.value = pantriesRepo
         } else {
             mutablePantries.value = pantriesRepo.filter { item ->
-                item.city?.contains(filter) ?: false
+                with(item) {
+                    false.takeUnless { organizations!!.contains(filter, ignoreCase = true) }
+                            .takeUnless { address!!.contains(filter, ignoreCase = true) }
+                            .takeUnless { city!!.contains(filter, ignoreCase = true) } ?: true
+                }
             }
         }
     }

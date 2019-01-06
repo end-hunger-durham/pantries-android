@@ -15,7 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-private val DEFAULT_ZOOM = 12.0f
+private val DEFAULT_ZOOM = 10.0f
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
@@ -24,7 +24,6 @@ private val KEY_LOCATION = "location"
 
 // TODO: Change icon color depending on whether it is open/closed
 class MapFragment : Fragment() {
-    private var mFusedLocationProviderClient: FusedLocationProviderClient ?= null
     private var mLastLocation: LatLng ?= null
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
@@ -40,8 +39,6 @@ class MapFragment : Fragment() {
             mLastLocation = savedInstanceState.getParcelable(KEY_LOCATION)
             mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(savedInstanceState.getParcelable(KEY_CAMERA_POSITION)))
         }
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -55,9 +52,7 @@ class MapFragment : Fragment() {
         mMapView?.getMapAsync{
             mMap = it
             updateMyLocationUI()
-            if (mLastLocation == null) {
-                getDeviceLocation()
-            }
+            updateCamera(DURHAM_NC)
 
             model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
                 mMap?.clear()
@@ -72,24 +67,6 @@ class MapFragment : Fragment() {
         }
 
         return rootView
-    }
-
-    private fun getDeviceLocation() {
-        if (mLocationPermissionGranted) {
-            try {
-                mFusedLocationProviderClient?.lastLocation?.addOnSuccessListener {
-                    it?.let { loc ->
-                        updateCamera(LatLng(loc.latitude, loc.longitude))
-                    }
-                }?.addOnFailureListener {
-                    updateCamera(DURHAM_NC)
-                }
-            } catch (e: SecurityException) {
-                e.printStackTrace()
-            }
-        } else {
-            updateCamera(DURHAM_NC)
-        }
     }
 
     private fun getLocationPermission(): Boolean {
