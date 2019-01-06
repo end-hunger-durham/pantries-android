@@ -21,6 +21,11 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        supportFragmentManager.addOnBackStackChangedListener {
+            val shouldEnableBack: Boolean = supportFragmentManager.backStackEntryCount > 0
+            supportActionBar?.setDisplayHomeAsUpEnabled(shouldEnableBack)
+        }
+
         val viewPager: ViewPager = findViewById(R.id.viewpager)
         viewPager.adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
 
@@ -28,6 +33,12 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         tabLayout.setupWithViewPager(viewPager)
 
         model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        model.filterPantries("")
+        supportFragmentManager.popBackStack()
+        return super.onSupportNavigateUp()
     }
 
     override fun onListFragmentInteraction(item: Pantry) {
@@ -44,19 +55,14 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     // Ignore back stack if viewing the map
     override fun onBackPressed() {
-        val viewPager = findViewById<ViewPager>(R.id.viewpager)
-
-        when (viewPager.currentItem) {
-            LIST_PAGE -> {
-                model.filterPantries("")
-                super.onBackPressed()
-            }
-            else -> finish()
-        }
+        model.filterPantries("")
+        super.onBackPressed()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        title = getString(R.string.app_name)
+
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
         mSearchQuery?.let {

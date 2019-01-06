@@ -42,15 +42,15 @@ class PantriesViewModel: ViewModel() {
 
     fun filterPantries(filter: String) {
         if (filter.equals("")) {
-            mutablePantries.value = pantriesRepo
+            mutablePantries.postValue(pantriesRepo)
         } else {
-            mutablePantries.value = pantriesRepo.filter { item ->
+            mutablePantries.postValue(pantriesRepo.filter { item ->
                 with(item) {
                     false.takeUnless { organizations.contains(filter, ignoreCase = true) }
                             ?.takeUnless { address.contains(filter, ignoreCase = true) }
                             ?.takeUnless { city.contains(filter, ignoreCase = true) } ?: true
                 }
-            }
+            })
         }
     }
 }

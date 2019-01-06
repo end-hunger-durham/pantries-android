@@ -15,7 +15,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-private val DEFAULT_ZOOM = 10.0f
+private val DEFAULT_ZOOM = 11.5f
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 

@@ -10,7 +10,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
-import android.support.v4.view.ViewPager
 import android.view.*
 
 private const val ARG_PANTRY = "pantry"
@@ -18,11 +17,14 @@ private val DEFAULT_ZOOM = 16.0f
 
 class DetailsFragment : Fragment() {
 
+    private var mPantry: Pantry ?= null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
+        mPantry = pantry
 
         val phone: Button = view.findViewById(R.id.phone)
         pantry?.phone?.let { number ->
@@ -51,6 +53,7 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         menu?.clear()
+        requireActivity().title = mPantry?.organizations ?: "Pantry"
         super.onCreateOptionsMenu(menu, inflater)
     }
 
