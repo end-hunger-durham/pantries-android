@@ -2,12 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_margin="8dp"
+    android:orientation="vertical">
 
     <TextView
-        android:id="@+id/content"
+        android:id="@+id/list_item_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:textSize="16sp"
+        android:layout_margin="1dp"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
+        android:id="@+id/list_item_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_margin="1dp"
         android:textAppearance="?attr/textAppearanceListItem" />
 </LinearLayout>

@@ -34,6 +34,8 @@ class MyItemRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mPantries[position]
         holder.mContentView.text = item.organizations
+        val info = "${item.days}, ${item.hours}"
+        holder.mInfoView.text = info
 
         with(holder.mView) {
             tag = item
@@ -44,7 +46,8 @@ class MyItemRecyclerViewAdapter(
     override fun getItemCount(): Int = mPantries.size
 
     inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mContentView: TextView = mView.content
+        val mContentView: TextView = mView.list_item_name
+        val mInfoView: TextView = mView.list_item_info
 
         override fun toString(): String {
             return super.toString() + " '" + mContentView.text + "'"
