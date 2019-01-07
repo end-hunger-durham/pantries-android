@@ -9,9 +9,19 @@ import java.io.IOException
 import java.net.URL
 
 class PantriesViewModel: ViewModel() {
-    private lateinit var pantries: MutableLiveData<List<Pantry>>
+    private var pantriesRepo: List<Pantry> = emptyList()
+    private val mutablePantries: MutableLiveData<List<Pantry>> = MutableLiveData()
+    val pantries: LiveData<List<Pantry>> = mutablePantries
+
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+
+    init {
+        uiScope.launch {
+            pantriesRepo = fetchPantries() ?: emptyList()
+            mutablePantries.value = pantriesRepo
+        }
+    }
 
     private suspend fun fetchPantries(): List<Pantry>? {
         return withContext(Dispatchers.IO) {
@@ -30,13 +40,17 @@ class PantriesViewModel: ViewModel() {
         viewModelJob.cancel()
     }
 
-    fun getPantries(): LiveData<List<Pantry>> {
-        if (!::pantries.isInitialized) {
-            pantries = MutableLiveData()
-            uiScope.launch {
-                pantries.value = fetchPantries()
-            }
+    fun filterPantries(filter: String) {
+        if (filter.equals("")) {
+            mutablePantries.postValue(pantriesRepo)
+        } else {
+            mutablePantries.postValue(pantriesRepo.filter { item ->
+                with(item) {
+                    false.takeUnless { organizations.contains(filter, ignoreCase = true) }
+                            ?.takeUnless { address.contains(filter, ignoreCase = true) }
+                            ?.takeUnless { city.contains(filter, ignoreCase = true) } ?: true
+                }
+            })
         }
-        return pantries
     }
 }
