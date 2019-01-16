@@ -27,10 +27,12 @@ class DetailsFragment : Fragment() {
         mPantry = pantry
 
         val phone: Button = view.findViewById(R.id.phone)
-        pantry?.phone?.let { number ->
-            phone.text = number
+        if (pantry?.phone == null || pantry.phone == "") {
+            phone.visibility = View.GONE
+        } else {
+            phone.text = pantry.phone
             phone.setOnClickListener{
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null)))
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", pantry.phone, null)))
             }
         }
 
