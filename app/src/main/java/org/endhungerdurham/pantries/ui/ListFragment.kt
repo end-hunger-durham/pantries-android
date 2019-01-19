@@ -93,8 +93,8 @@ class ListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                // HACK: If search view is iconified, we are switching fragments and don't want to filter
-                if (newText.isNotEmpty() || !searchView.isIconified) {
+                // HACK: If iconified, we are switching fragments and don't want to filter
+                if (!searchView.isIconified) {
                     model.filterPantries(newText)
                     mSearchQuery = newText
                 }
