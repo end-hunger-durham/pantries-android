@@ -1,10 +1,12 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui.viewmodel
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.JSON
+import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.PantryList
 import java.io.IOException
 import java.net.URL
 

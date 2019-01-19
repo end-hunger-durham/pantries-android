@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui
 
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
@@ -8,7 +8,11 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.SearchView
 import android.view.Menu
-import org.endhungerdurham.pantries.ListFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.ui.adapter.MyFragmentPagerAdapter
+import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 val KEY_SEARCH_QUERY = "search_query"
 

@@ -1,8 +1,11 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui.adapter
 import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import org.endhungerdurham.pantries.ui.MapFragment
+import org.endhungerdurham.pantries.ui.PantriesFragment
+import org.endhungerdurham.pantries.R
 import java.lang.RuntimeException
 
 val MAP_PAGE = 0

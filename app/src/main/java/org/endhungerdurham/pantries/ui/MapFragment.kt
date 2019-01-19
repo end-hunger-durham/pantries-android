@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -9,11 +9,12 @@ import com.google.android.gms.maps.MapView
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.view.*
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private val DEFAULT_ZOOM = 11.5f
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)

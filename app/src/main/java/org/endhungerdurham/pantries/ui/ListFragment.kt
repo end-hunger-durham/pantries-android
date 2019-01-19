@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -11,6 +11,10 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.ProgressBar
+import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
+import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 /**
  * A fragment representing a list of Items.

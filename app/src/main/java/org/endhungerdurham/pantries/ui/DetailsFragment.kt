@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,13 +11,15 @@ import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
 import android.view.*
+import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.R
 
 private const val ARG_PANTRY = "pantry"
 private val DEFAULT_ZOOM = 16.0f
 
 class DetailsFragment : Fragment() {
 
-    private var mPantry: Pantry ?= null
+    private var mPantry: Pantry?= null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
