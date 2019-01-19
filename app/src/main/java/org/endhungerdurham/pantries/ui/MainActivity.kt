@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(shouldEnableBack)
         }
 
+        val shouldEnableBack: Boolean = supportFragmentManager.backStackEntryCount > 0
+        supportActionBar?.setDisplayHomeAsUpEnabled(shouldEnableBack)
+
         val viewPager: ViewPager = findViewById(R.id.viewpager)
         viewPager.adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
 
@@ -61,7 +64,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         fragmentTransaction.commit()
     }
 
-    // Ignore back stack if viewing the map
     override fun onBackPressed() {
         model.filterPantries("")
         super.onBackPressed()

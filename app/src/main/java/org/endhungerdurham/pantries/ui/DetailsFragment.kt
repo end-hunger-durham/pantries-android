@@ -27,6 +27,7 @@ class DetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
+        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
     }
 
@@ -58,7 +59,6 @@ class DetailsFragment : Fragment() {
         }
 
         fillDetails(view, pantry)
-
         model.filterPantries(pantry?.organizations ?: "")
         setHasOptionsMenu(true)
 
