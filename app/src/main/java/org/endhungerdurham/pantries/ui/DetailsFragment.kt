@@ -1,5 +1,6 @@
 package org.endhungerdurham.pantries.ui
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.widget.Button
@@ -13,13 +14,21 @@ import android.net.Uri
 import android.view.*
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val ARG_PANTRY = "pantry"
 private val DEFAULT_ZOOM = 16.0f
 
 class DetailsFragment : Fragment() {
 
+    private lateinit var model: PantriesViewModel
     private var mPantry: Pantry?= null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -50,13 +59,13 @@ class DetailsFragment : Fragment() {
 
         fillDetails(view, pantry)
 
+        model.filterPantries(pantry?.organizations ?: "")
         setHasOptionsMenu(true)
 
         return view
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.clear()
         requireActivity().title = mPantry?.organizations ?: "Pantry"
         super.onCreateOptionsMenu(menu, inflater)
     }

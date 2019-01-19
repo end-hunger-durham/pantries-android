@@ -14,12 +14,10 @@ import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionLis
 import org.endhungerdurham.pantries.ui.adapter.MyFragmentPagerAdapter
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
-val KEY_SEARCH_QUERY = "search_query"
-
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     private lateinit var model: PantriesViewModel
-    private var mSearchQuery: String ?= null
+    private var mMenu: Menu ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +43,16 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         return super.onSupportNavigateUp()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        mMenu = menu
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onListFragmentInteraction(item: Pantry) {
-        item.address.let {
-            model.filterPantries(it)
-        }
+        // HACK: Setting iconified to indicate text should not be filtered
+        val searchItem = mMenu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+        searchView.isIconified = true
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
@@ -61,45 +65,5 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onBackPressed() {
         model.filterPantries("")
         super.onBackPressed()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.main_menu, menu)
-        title = getString(R.string.app_name)
-
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-        mSearchQuery?.let {
-            searchView.setQuery(it, false)
-        }
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                model.filterPantries(query)
-
-                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
-                // see https://code.google.com/p/android/issues/detail?id=24599
-                searchView.clearFocus()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                mSearchQuery = newText
-                model.filterPantries(newText)
-                return true
-            }
-        })
-
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        outState?.putString(KEY_SEARCH_QUERY, mSearchQuery)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
     }
 }
