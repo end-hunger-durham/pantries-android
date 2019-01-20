@@ -7,17 +7,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailsFragment">
 
-    <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/liteMapView"
-        android:layout_width="match_parent"
+    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@id/mapView"
+        android:layout_width="0dp"
         android:layout_height="175dp"
-        map:layout_constraintBottom_toTopOf="@+id/phone"
-        map:layout_constraintDimensionRatio="1:1"
-        map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toTopOf="parent"
-        map:liteMode="true"
-        map:mapType="normal" />
+        app:layout_constraintBottom_toTopOf="@+id/phone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/mapLoading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleX="0.5"
+            android:scaleY="0.5" />
+
+        <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:map="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/liteMapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            map:liteMode="true"
+            map:mapType="normal" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/address"
@@ -141,5 +154,5 @@
         app:layout_constraintBottom_toTopOf="@+id/address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/liteMapView" />
+        app:layout_constraintTop_toBottomOf="@+id/mapView" />
 </android.support.constraint.ConstraintLayout>

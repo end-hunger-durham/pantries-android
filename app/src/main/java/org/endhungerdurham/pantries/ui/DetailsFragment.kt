@@ -12,6 +12,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
 import android.view.*
+import android.widget.ProgressBar
+import kotlinx.coroutines.*
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
@@ -27,7 +29,6 @@ class DetailsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
-        requireActivity().actionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
     }
 
@@ -37,6 +38,25 @@ class DetailsFragment : Fragment() {
 
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
         mPantry = pantry
+
+        val loading = view.findViewById(R.id.mapLoading) as? ProgressBar
+        loading?.visibility = View.VISIBLE
+
+        val map = view.findViewById(R.id.liteMapView) as? MapView
+        map?.onCreate(savedInstanceState)
+        map?.visibility = View.INVISIBLE
+        map?.getMapAsync {
+            pantry?.let { pantry ->
+                val pos = LatLng(pantry.latitude, pantry.longitude)
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
+                it.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
+            }
+
+            it.setOnMapLoadedCallback {
+                map.visibility = View.VISIBLE
+                loading?.visibility = View.GONE
+            }
+        }
 
         val phone: Button = view.findViewById(R.id.phone)
         if (pantry?.phone == null || pantry.phone == "") {
@@ -48,19 +68,8 @@ class DetailsFragment : Fragment() {
             }
         }
 
-        val map = view.findViewById(R.id.liteMapView) as? MapView
-        map?.onCreate(savedInstanceState)
-        map?.getMapAsync {
-            pantry?.let { pantry ->
-                val pos = LatLng(pantry.latitude, pantry.longitude)
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
-                it.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
-            }
-        }
-
         fillDetails(view, pantry)
         model.filterPantries(pantry?.organizations ?: "")
-        setHasOptionsMenu(true)
 
         return view
     }

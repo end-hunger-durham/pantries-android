@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Pantry) {
         // HACK: Setting iconified to indicate text should not be filtered
         val searchItem = mMenu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-        searchView.isIconified = true
+        val searchView = searchItem?.actionView as? SearchView
+        searchView?.isIconified = true
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
