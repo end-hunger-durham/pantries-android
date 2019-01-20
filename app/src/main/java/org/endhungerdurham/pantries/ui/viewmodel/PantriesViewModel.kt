@@ -19,10 +19,7 @@ class PantriesViewModel: ViewModel() {
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     init {
-        uiScope.launch {
-            pantriesRepo = fetchPantries() ?: emptyList()
-            mutablePantries.value = pantriesRepo
-        }
+        reloadPantries()
     }
 
     private suspend fun fetchPantries(): List<Pantry>? {
@@ -53,6 +50,14 @@ class PantriesViewModel: ViewModel() {
                             ?.takeUnless { city.contains(filter, ignoreCase = true) } ?: true
                 }
             })
+        }
+    }
+
+    fun reloadPantries() {
+        uiScope.launch {
+            pantriesRepo = fetchPantries() ?: emptyList()
+            // TODO: use smarter filtering so that filter is preserved across reload
+            mutablePantries.postValue(pantriesRepo)
         }
     }
 }

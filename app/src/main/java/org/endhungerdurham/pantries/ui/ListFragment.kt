@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.*
 import android.widget.ProgressBar
+import android.widget.TextView
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
@@ -42,6 +44,15 @@ class ListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
+        val pb = view.findViewById(R.id.pbLoading) as? ProgressBar
+
+        val swipeContainer = view.findViewById(R.id.listWrapper) as? SwipeRefreshLayout
+        swipeContainer?.setOnRefreshListener {
+            model.reloadPantries()
+            pb?.visibility = View.VISIBLE
+            swipeContainer.isRefreshing = false
+        }
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.list)
 
         with(recyclerView) {
@@ -50,14 +61,17 @@ class ListFragment : Fragment() {
         }
 
         model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
-            val pb = view.findViewById<ProgressBar>(R.id.pbLoading)
-            pb.visibility = ProgressBar.GONE
+            pb?.visibility = ProgressBar.GONE
 
-            if (pantries != null) {
-                recyclerView.adapter = MyItemRecyclerViewAdapter(pantries, listener)
-            } else {
-                // TODO: Retry loading
+            val errorLoading = view.findViewById(R.id.error) as? TextView
+            errorLoading?.visibility = View.GONE
+
+            // TODO: Smarter check of whether network error occurred using SUCCESS or ERROR return
+            if (pantries?.isNullOrEmpty() == true) {
+                errorLoading?.visibility = View.VISIBLE
             }
+
+            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries, listener)
         })
 
         return view
