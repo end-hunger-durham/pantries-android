@@ -1,9 +1,6 @@
 package org.endhungerdurham.pantries.ui.viewmodel
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.JSON
 import org.endhungerdurham.pantries.Pantry
@@ -17,17 +14,27 @@ enum class NetworkState {
     FAILURE,
 }
 
+class DoubleTrigger<A, B>(a: LiveData<A>, b: LiveData<B>) : MediatorLiveData<Pair<A?, B?>>() {
+    init {
+        addSource(a) { value = it to b.value }
+        addSource(b) { value = a.value to it }
+    }
+}
+
 class PantriesViewModel: ViewModel() {
-    private var pantriesRepo: List<Pantry> = emptyList()
+    private var pantriesRepo: MutableLiveData<List<Pantry>> = MutableLiveData()
     private val query = MutableLiveData<String>()
     private val mutableNetworkState: MutableLiveData<NetworkState> = MutableLiveData()
     val networkState: LiveData<NetworkState> = mutableNetworkState
-    val pantries: LiveData<List<Pantry>> = Transformations.switchMap(query) { query ->
+    val pantries: LiveData<List<Pantry>> = Transformations.switchMap(DoubleTrigger(pantriesRepo, query)) {
+        val repo = it?.first ?: emptyList()
+        val query = it?.second ?: ""
+
         val filtered = MutableLiveData<List<Pantry>>()
         filtered.value = when (query) {
-            "" -> pantriesRepo
+            "" -> repo
             else -> {
-                pantriesRepo.filter { pantry ->
+                repo.filter { pantry ->
                     with(pantry) {
                         false.takeUnless { organizations.contains(query, ignoreCase = true) }
                                 ?.takeUnless { address.contains(query, ignoreCase = true) }
@@ -73,7 +80,7 @@ class PantriesViewModel: ViewModel() {
 
     fun reloadPantries() {
         uiScope.launch {
-            pantriesRepo = fetchPantries()
+            pantriesRepo.postValue(fetchPantries())
         }
     }
 }
