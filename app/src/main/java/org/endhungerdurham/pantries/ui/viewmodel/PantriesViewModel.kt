@@ -11,9 +11,17 @@ import org.endhungerdurham.pantries.PantryList
 import java.io.IOException
 import java.net.URL
 
+enum class NetworkState {
+    SUCCESS,
+    LOADING,
+    FAILURE,
+}
+
 class PantriesViewModel: ViewModel() {
     private var pantriesRepo: List<Pantry> = emptyList()
     private val query = MutableLiveData<String>()
+    private val mutableNetworkState: MutableLiveData<NetworkState> = MutableLiveData()
+    val networkState: LiveData<NetworkState> = mutableNetworkState
     val pantries: LiveData<List<Pantry>> = Transformations.switchMap(query) { query ->
         val filtered = MutableLiveData<List<Pantry>>()
         filtered.value = when (query) {
@@ -39,14 +47,17 @@ class PantriesViewModel: ViewModel() {
         reloadPantries()
     }
 
-    private suspend fun fetchPantries(): List<Pantry>? {
+    private suspend fun fetchPantries(): List<Pantry> {
         return withContext(Dispatchers.IO) {
+            mutableNetworkState.postValue(NetworkState.LOADING)
             try {
                 val json = URL("https://raw.githubusercontent.com/end-hunger-durham/data-importer/master/pantries.json").readText()
+                mutableNetworkState.postValue(NetworkState.SUCCESS)
                 JSON.parse(PantryList.serializer(), json).pantries
             } catch (e: IOException) {
                 //TODO: Retry (https://stackoverflow.com/a/47525583)
-                null
+                mutableNetworkState.postValue(NetworkState.FAILURE)
+                emptyList<Pantry>()
             }
         }
     }
@@ -56,13 +67,13 @@ class PantriesViewModel: ViewModel() {
         viewModelJob.cancel()
     }
 
-    fun filterPantries(queryString: String) {
+    fun filter(queryString: String) {
         query.value = queryString
     }
 
     fun reloadPantries() {
         uiScope.launch {
-            pantriesRepo = fetchPantries() ?: emptyList()
+            pantriesRepo = fetchPantries()
         }
     }
 }

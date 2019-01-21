@@ -17,6 +17,7 @@ import android.widget.TextView
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
+import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private val KEY_SEARCH_QUERY = "search_query"
@@ -44,8 +45,6 @@ class ListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        val pb = view.findViewById(R.id.pbLoading) as? ProgressBar
-
         val swipeContainer = view.findViewById(R.id.listWrapper) as? SwipeRefreshLayout
         swipeContainer?.setOnRefreshListener {
             model.reloadPantries()
@@ -60,17 +59,23 @@ class ListFragment : Fragment() {
         }
 
         model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
-            pb?.visibility = ProgressBar.GONE
+            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
+        })
 
+        model.networkState.observe(this, Observer { result ->
             val errorLoading = view.findViewById(R.id.error) as? TextView
-            errorLoading?.visibility = View.GONE
-
-            // TODO: Smarter check of whether network error occurred using SUCCESS or ERROR return
-            if (pantries?.isNullOrEmpty() == true) {
-                errorLoading?.visibility = View.VISIBLE
+            val pb = view.findViewById(R.id.pbLoading) as? ProgressBar
+            when (result) {
+                NetworkState.SUCCESS -> {
+                    errorLoading?.visibility = TextView.GONE
+                    pb?.visibility = ProgressBar.GONE
+                }
+                NetworkState.LOADING -> pb?.visibility = ProgressBar.VISIBLE
+                NetworkState.FAILURE -> {
+                    errorLoading?.visibility = TextView.VISIBLE
+                    pb?.visibility = ProgressBar.GONE
+                }
             }
-
-            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries, listener)
         })
 
         return view
@@ -97,7 +102,7 @@ class ListFragment : Fragment() {
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String): Boolean {
-                model.filterPantries(query)
+                model.filter(query)
 
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
@@ -108,7 +113,7 @@ class ListFragment : Fragment() {
             override fun onQueryTextChange(newText: String): Boolean {
                 // HACK: If iconified, we are switching fragments and don't want to filter
                 if (!searchView.isIconified) {
-                    model.filterPantries(newText)
+                    model.filter(newText)
                     mSearchQuery = newText
                 }
                 return true

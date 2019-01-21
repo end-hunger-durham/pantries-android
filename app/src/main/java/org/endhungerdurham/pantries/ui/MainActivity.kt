@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        model.filterPantries("")
+        model.filter("")
         supportFragmentManager.popBackStack()
         return super.onSupportNavigateUp()
     }
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     override fun onBackPressed() {
-        model.filterPantries("")
+        model.filter("")
         super.onBackPressed()
     }
 }

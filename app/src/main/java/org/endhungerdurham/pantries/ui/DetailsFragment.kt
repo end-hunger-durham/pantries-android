@@ -13,13 +13,12 @@ import android.content.Intent
 import android.net.Uri
 import android.view.*
 import android.widget.ProgressBar
-import kotlinx.coroutines.*
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val ARG_PANTRY = "pantry"
-private val DEFAULT_ZOOM = 16.0f
+private const val DEFAULT_ZOOM = 16.0f
 
 class DetailsFragment : Fragment() {
 
@@ -69,7 +68,7 @@ class DetailsFragment : Fragment() {
         }
 
         fillDetails(view, pantry)
-        model.filterPantries(pantry?.address ?: "")
+        model.filter(pantry?.address ?: "")
 
         return view
     }
