@@ -4,18 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListFragment">
+    tools:context=".ui.ListFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="0dp"
+    <android.support.v4.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/listWrapper"
         android:layout_height="0dp"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+        android:layout_width="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/list_item" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+
+            tools:listitem="@layout/list_item" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/pbLoading"
@@ -23,9 +31,20 @@
         android:layout_height="wrap_content"
         android:scaleX="1"
         android:scaleY="1"
-        app:layout_constraintBottom_toTopOf="@+id/list"
-        app:layout_constraintEnd_toStartOf="@+id/list"
+        app:layout_constraintBottom_toTopOf="@+id/listWrapper"
+        app:layout_constraintEnd_toStartOf="@+id/listWrapper"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/list"
-        app:layout_constraintTop_toBottomOf="@+id/list" />
+        app:layout_constraintStart_toEndOf="@+id/listWrapper"
+        app:layout_constraintTop_toBottomOf="@+id/listWrapper" />
+
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/error_loading"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

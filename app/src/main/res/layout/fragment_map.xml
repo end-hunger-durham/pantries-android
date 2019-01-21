@@ -6,4 +6,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     map:cameraZoom="13"
-    tools:context=".MapFragment"/>
+    tools:context=".ui.MapFragment"/>

@@ -1,12 +1,15 @@
-package org.endhungerdurham.pantries
+package org.endhungerdurham.pantries.ui.adapter
 import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import org.endhungerdurham.pantries.ui.MapFragment
+import org.endhungerdurham.pantries.ui.PantriesFragment
+import org.endhungerdurham.pantries.R
 import java.lang.RuntimeException
 
-val MAP_PAGE = 0
-val LIST_PAGE = 1
+const val MAP_PAGE = 0
+const val LIST_PAGE = 1
 
 class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPagerAdapter(fm) {
     internal val PAGE_COUNT = 2
