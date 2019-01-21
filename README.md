@@ -1,6 +1,6 @@
-# Durham Food Pantries
+# Durham Food Resources
 
-An android application used to display food pantries in the Durham area and provide directions to the pantries.
+An android application used to display food pantries in the Durham area and provide information and directions.
 
 ## Installation
 
