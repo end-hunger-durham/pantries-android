@@ -69,7 +69,7 @@ class DetailsFragment : Fragment() {
         }
 
         fillDetails(view, pantry)
-        model.filterPantries(pantry?.organizations ?: "")
+        model.filterPantries(pantry?.address ?: "")
 
         return view
     }
