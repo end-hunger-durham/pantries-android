@@ -49,7 +49,6 @@ class ListFragment : Fragment() {
         val swipeContainer = view.findViewById(R.id.listWrapper) as? SwipeRefreshLayout
         swipeContainer?.setOnRefreshListener {
             model.reloadPantries()
-            pb?.visibility = View.VISIBLE
             swipeContainer.isRefreshing = false
         }
 
