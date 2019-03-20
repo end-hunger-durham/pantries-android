@@ -1,10 +1,12 @@
 package org.endhungerdurham.pantries.ui.viewmodel
 
+import android.app.Application
 import android.arch.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.JSON
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.PantryList
+import org.endhungerdurham.pantries.R
 import java.io.IOException
 import java.net.URL
 
@@ -21,7 +23,8 @@ class DoubleTrigger<A, B>(a: LiveData<A>, b: LiveData<B>) : MediatorLiveData<Pai
     }
 }
 
-class PantriesViewModel: ViewModel() {
+class PantriesViewModel(application: Application): AndroidViewModel(application) {
+    private val url_string: String ?= application.resources.getString(R.string.pantries_json_url)
     private var pantriesRepo: MutableLiveData<List<Pantry>> = MutableLiveData()
     private val query = MutableLiveData<String>()
     private val mutableNetworkState: MutableLiveData<NetworkState> = MutableLiveData()
@@ -58,7 +61,7 @@ class PantriesViewModel: ViewModel() {
         return withContext(Dispatchers.IO) {
             mutableNetworkState.postValue(NetworkState.LOADING)
             try {
-                val json = URL("https://raw.githubusercontent.com/end-hunger-durham/data-importer/master/pantries.json").readText()
+                val json = URL(url_string).readText()
                 mutableNetworkState.postValue(NetworkState.SUCCESS)
                 JSON.parse(PantryList.serializer(), json).pantries
             } catch (e: IOException) {
