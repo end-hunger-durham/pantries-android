@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
-import android.support.v7.widget.SearchView
 import android.view.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
@@ -34,7 +33,6 @@ class MapFragment : Fragment() {
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
     private var mMapView: MapView ?= null
-    private var mMenu: Menu ?= null
     private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +44,6 @@ class MapFragment : Fragment() {
             mLastLocation = savedInstanceState.getParcelable(KEY_LOCATION)
             mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(savedInstanceState.getParcelable(KEY_CAMERA_POSITION)))
         }
-
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -65,16 +61,16 @@ class MapFragment : Fragment() {
 
             it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter{
                 override fun getInfoContents(p0: Marker?): View? {
-                    var infoView = requireActivity().layoutInflater.inflate(R.layout.info_window_item, null)
+                    val infoView = inflater.inflate(R.layout.info_window_item, container, false)
                     val pantry: Pantry? = p0?.tag as? Pantry?
 
-                    infoView?.info_org?.text = pantry?.organizations
+                    infoView.info_org.text = pantry?.organizations
 
-                    val days: String = "Days: ${pantry?.days}"
-                    infoView?.info_days?.text = days
+                    val days = "Days: ${pantry?.days}"
+                    infoView.info_days.text = days
 
-                    val hours: String = "Hours: ${pantry?.hours}"
-                    infoView?.info_hours?.text = hours
+                    val hours = "Hours: ${pantry?.hours}"
+                    infoView.info_hours.text = hours
 
                     return infoView
                 }
@@ -89,11 +85,6 @@ class MapFragment : Fragment() {
                 viewPager.post{
                     viewPager.arrowScroll(View.FOCUS_RIGHT)
                 }
-
-                // HACK: Setting iconified to indicate text should not be filtered
-                val searchItem = mMenu?.findItem(R.id.action_search)
-                val searchView = searchItem?.actionView as? SearchView
-                searchView?.isIconified = true
 
                 val fragmentTransaction = fragmentManager?.beginTransaction()
                 fragmentTransaction?.replace(R.id.pantries_frame, DetailsFragment.newInstance(marker.tag as? Pantry))
@@ -160,11 +151,6 @@ class MapFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        mMenu = menu
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onResume() {

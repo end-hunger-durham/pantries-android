@@ -24,7 +24,7 @@ class DoubleTrigger<A, B>(a: LiveData<A>, b: LiveData<B>) : MediatorLiveData<Pai
 }
 
 class PantriesViewModel(application: Application): AndroidViewModel(application) {
-    private val url_string: String ?= application.resources.getString(R.string.pantries_json_url)
+    private val urlString: String ?= application.resources.getString(R.string.pantries_json_url)
     private var pantriesRepo: MutableLiveData<List<Pantry>> = MutableLiveData()
     private val query = MutableLiveData<String>()
     private val mutableNetworkState: MutableLiveData<NetworkState> = MutableLiveData()
@@ -61,7 +61,7 @@ class PantriesViewModel(application: Application): AndroidViewModel(application)
         return withContext(Dispatchers.IO) {
             mutableNetworkState.postValue(NetworkState.LOADING)
             try {
-                val json = URL(url_string).readText()
+                val json = URL(urlString).readText()
                 mutableNetworkState.postValue(NetworkState.SUCCESS)
                 JSON.parse(PantryList.serializer(), json).pantries
             } catch (e: IOException) {
@@ -78,7 +78,7 @@ class PantriesViewModel(application: Application): AndroidViewModel(application)
     }
 
     fun filter(queryString: String) {
-        query.value = queryString
+        query.postValue(queryString)
     }
 
     fun reloadPantries() {

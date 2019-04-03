@@ -20,7 +20,7 @@ import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
 import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
-private val KEY_SEARCH_QUERY = "search_query"
+private const val KEY_SEARCH_QUERY = "search_query"
 
 /**
  * A fragment representing a list of Items.
@@ -32,7 +32,6 @@ class ListFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var model: PantriesViewModel
-    private var mSearchView: SearchView ?= null
     private var mSearchQuery: String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +43,8 @@ class ListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
+
+        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
 
         val swipeContainer = view.findViewById(R.id.listWrapper) as? SwipeRefreshLayout
         swipeContainer?.setOnRefreshListener {
@@ -86,7 +87,7 @@ class ListFragment : Fragment() {
         if (context is OnListFragmentInteractionListener) {
             listener = context
         } else {
-            throw RuntimeException("${context} must implement OnListFragmentInteractionListener")
+            throw RuntimeException("$context must implement OnListFragmentInteractionListener")
         }
     }
 
@@ -97,11 +98,14 @@ class ListFragment : Fragment() {
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
         mSearchQuery?.let {
+            searchItem.expandActionView()
             searchView.setQuery(it, false)
+            searchView.clearFocus()
         }
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String): Boolean {
+                mSearchQuery = query
                 model.filter(query)
 
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
@@ -111,15 +115,13 @@ class ListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                // HACK: If iconified, we are switching fragments and don't want to filter
-                if (!searchView.isIconified) {
-                    model.filter(newText)
+                if (isVisible) {
                     mSearchQuery = newText
+                    model.filter(newText)
                 }
                 return true
             }
         })
-        mSearchView = searchView
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -130,12 +132,9 @@ class ListFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_SEARCH_QUERY, mSearchView?.query as? String)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
+        if (!mSearchQuery.isNullOrEmpty()) {
+            outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
+        }
     }
 
     /**
