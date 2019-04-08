@@ -3,6 +3,7 @@
     <item android:id="@+id/action_search"
         android:title="@string/search"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="withText|collapseActionView|always"
+        app:queryHint="Search by Organization, Address, or Zip Code"
+        app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 </menu>

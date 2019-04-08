@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.view.*
+import android.widget.ProgressBar
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -50,7 +51,10 @@ class MapFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_map, container, false)
 
-        mMapView = rootView.findViewById(R.id.mapView)
+        val loading = rootView.findViewById(R.id.fragment_map_loading) as? ProgressBar
+        loading?.visibility = View.VISIBLE
+
+        mMapView = rootView.findViewById(R.id.fragment_map_view)
         mMapView?.onCreate(savedInstanceState)
         mMapView?.onResume()
 
@@ -58,6 +62,11 @@ class MapFragment : Fragment() {
             mMap = it
             updateMyLocationUI()
             updateCamera(DURHAM_NC)
+
+            it.setOnMapLoadedCallback {
+                mMapView?.visibility = View.VISIBLE
+                loading?.visibility = View.GONE
+            }
 
             it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter{
                 override fun getInfoContents(p0: Marker?): View? {

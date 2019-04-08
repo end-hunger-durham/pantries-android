@@ -44,10 +44,10 @@ class DetailsFragment : Fragment() {
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
         mPantry = pantry
 
-        val loading = view.findViewById(R.id.mapLoading) as? ProgressBar
+        val loading = view.findViewById(R.id.fragment_details_map_loading) as? ProgressBar
         loading?.visibility = View.VISIBLE
 
-        val map = view.findViewById(R.id.liteMapView) as? MapView
+        val map = view.findViewById(R.id.fragment_details_map_view) as? MapView
         map?.onCreate(savedInstanceState)
         map?.visibility = View.INVISIBLE
         map?.getMapAsync {
@@ -87,11 +87,11 @@ class DetailsFragment : Fragment() {
         val addressText = view.findViewById<TextView>(R.id.address_field)
         addressText.append("${pantry?.address} ${pantry?.city}")
 
-        val avaialabilityText = view.findViewById<TextView>(R.id.availability_field)
-        avaialabilityText.append("${pantry?.days} ${pantry?.hours}")
+        val availabilityText = view.findViewById<TextView>(R.id.availability_field)
+        availabilityText.append("${pantry?.days} ${pantry?.hours}")
 
-        val qualsText = view.findViewById<TextView>(R.id.qualifications_field)
-        qualsText.append("${pantry?.prereq}")
+        val qualificationsText = view.findViewById<TextView>(R.id.qualifications_field)
+        qualificationsText.append("${pantry?.prereq}")
 
         val infoText = view.findViewById<TextView>(R.id.info_field)
         infoText.append("${pantry?.info}")

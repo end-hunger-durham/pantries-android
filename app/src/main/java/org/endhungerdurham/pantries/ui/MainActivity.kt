@@ -1,6 +1,5 @@
 package org.endhungerdurham.pantries.ui
 
-import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.TabLayout
@@ -10,11 +9,8 @@ import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionListener
 import org.endhungerdurham.pantries.ui.adapter.MyFragmentPagerAdapter
-import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
-
-    private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +21,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(shouldEnableBack)
         }
 
+        // Used to handle screen rotation while DetailsFragment is running
         val shouldEnableBack: Boolean = supportFragmentManager.backStackEntryCount > 0
         supportActionBar?.setDisplayHomeAsUpEnabled(shouldEnableBack)
 
@@ -33,8 +30,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
         tabLayout.setupWithViewPager(viewPager)
-
-        model = ViewModelProviders.of(this).get(PantriesViewModel::class.java)
     }
 
     override fun onSupportNavigateUp(): Boolean {

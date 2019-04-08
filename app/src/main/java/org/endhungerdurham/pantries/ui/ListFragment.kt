@@ -52,15 +52,13 @@ class ListFragment : Fragment() {
             swipeContainer.isRefreshing = false
         }
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.list)
-
-        with(recyclerView) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.list)?.apply {
             addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
             layoutManager = LinearLayoutManager(context)
         }
 
         model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
-            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
+            recyclerView?.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
         })
 
         model.networkState.observe(this, Observer { result ->

@@ -8,7 +8,7 @@
     tools:context=".ui.DetailsFragment">
 
     <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@id/mapView"
+        android:id="@+id/fragment_details_map_wrapper"
         android:layout_width="0dp"
         android:layout_height="175dp"
         app:layout_constraintBottom_toTopOf="@+id/phone"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-            android:id="@+id/mapLoading"
+            android:id="@+id/fragment_details_map_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleX="0.5"
@@ -25,7 +25,7 @@
 
         <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/liteMapView"
+            android:id="@+id/fragment_details_map_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             map:liteMode="true"
@@ -57,13 +57,13 @@
         app:autoSizeMaxTextSize="18sp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/avaialability"
+        app:layout_constraintBottom_toTopOf="@+id/availability"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/address" />
 
     <TextView
-        android:id="@+id/avaialability"
+        android:id="@+id/availability"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
@@ -90,7 +90,7 @@
         app:layout_constraintBottom_toTopOf="@+id/qualifications"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/avaialability" />
+        app:layout_constraintTop_toBottomOf="@+id/availability" />
 
     <TextView
         android:id="@+id/qualifications"
@@ -166,5 +166,5 @@
         app:layout_constraintBottom_toTopOf="@+id/address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapView" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_details_map_wrapper" />
 </android.support.constraint.ConstraintLayout>
