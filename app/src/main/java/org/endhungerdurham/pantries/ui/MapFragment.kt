@@ -95,17 +95,11 @@ class MapFragment : Fragment() {
                     viewPager.arrowScroll(View.FOCUS_RIGHT)
                 }
 
-                val fragmentTransaction = fragmentManager?.beginTransaction()
-                fragmentTransaction?.replace(R.id.pantries_frame, DetailsFragment.newInstance(marker.tag as? Pantry))
-                fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                when (fragmentManager?.backStackEntryCount) {
-                    0 -> fragmentTransaction?.addToBackStack(null)
-                    else -> {
-                        fragmentManager?.popBackStack()
-                        fragmentTransaction?.addToBackStack(null)
-                    }
-                }
-                fragmentTransaction?.commit()
+                val fragmentTransaction = childFragmentManager.beginTransaction()
+                fragmentTransaction.add(R.id.fragment_wrapper, DetailsFragment.newInstance(marker.tag as? Pantry))
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
             }
 
             model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
