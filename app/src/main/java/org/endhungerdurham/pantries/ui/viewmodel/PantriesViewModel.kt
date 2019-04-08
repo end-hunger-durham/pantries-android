@@ -65,7 +65,6 @@ class PantriesViewModel(application: Application): AndroidViewModel(application)
                 mutableNetworkState.postValue(NetworkState.SUCCESS)
                 JSON.parse(PantryList.serializer(), json).pantries
             } catch (e: IOException) {
-                //TODO: Retry (https://stackoverflow.com/a/47525583)
                 mutableNetworkState.postValue(NetworkState.FAILURE)
                 emptyList<Pantry>()
             }

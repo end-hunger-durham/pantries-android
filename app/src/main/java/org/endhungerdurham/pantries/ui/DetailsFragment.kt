@@ -34,6 +34,9 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        // clear filter after choosing pantry
+        model.filter("")
+
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
         requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE

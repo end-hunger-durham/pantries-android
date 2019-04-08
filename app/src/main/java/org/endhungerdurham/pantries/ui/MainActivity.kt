@@ -43,9 +43,6 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     }
 
     override fun onListFragmentInteraction(item: Pantry) {
-        // clear filter after choosing item
-        model.filter("")
-
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.pantries_frame, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
