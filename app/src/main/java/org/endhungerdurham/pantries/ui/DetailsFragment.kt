@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
+import android.support.design.widget.TabLayout
 import android.view.*
 import android.widget.ProgressBar
 import org.endhungerdurham.pantries.Pantry
@@ -33,7 +34,12 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        // clear filter after choosing pantry
+        model.filter("")
+
         val view = inflater.inflate(R.layout.fragment_details, container, false)
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
 
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
         mPantry = pantry
@@ -68,7 +74,6 @@ class DetailsFragment : Fragment() {
         }
 
         fillDetails(view, pantry)
-        model.filter(pantry?.address ?: "")
 
         return view
     }
@@ -92,13 +97,18 @@ class DetailsFragment : Fragment() {
         infoText.append("${pantry?.info}")
     }
 
+    override fun onDestroyView() {
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
+        super.onDestroyView()
+    }
+
     companion object {
         @JvmStatic
         fun newInstance(item: Pantry?) : DetailsFragment {
             val args = Bundle()
             args.putParcelable(ARG_PANTRY, item)
             val fragment = DetailsFragment()
-            fragment.setArguments(args)
+            fragment.arguments = args
             return fragment
         }
     }
