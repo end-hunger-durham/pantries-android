@@ -121,6 +121,9 @@ class MapFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu?.clear()
+
         inflater?.inflate(R.menu.main_menu, menu)
         requireActivity().title = getString(R.string.app_name)
 
@@ -151,7 +154,6 @@ class MapFragment : Fragment() {
                 return true
             }
         })
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun getLocationPermission(): Boolean {
