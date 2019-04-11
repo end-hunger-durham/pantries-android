@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
     override fun onListFragmentInteraction(item: Pantry) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_wrapper, DetailsFragment.newInstance(item))
+        fragmentTransaction.replace(R.id.root_list_fragment, DetailsFragment.newInstance(item))
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()

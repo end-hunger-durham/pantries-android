@@ -3,8 +3,9 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import org.endhungerdurham.pantries.ui.WrapperFragment
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.container.RootListFragment
+import org.endhungerdurham.pantries.ui.container.RootMapFragment
 import java.lang.RuntimeException
 
 const val MAP_PAGE = 0
@@ -20,8 +21,8 @@ class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPa
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            MAP_PAGE -> WrapperFragment.newInstance("map")
-            LIST_PAGE -> WrapperFragment.newInstance("list")
+            MAP_PAGE -> RootMapFragment()
+            LIST_PAGE -> RootListFragment()
             else -> throw RuntimeException("Invalid tab position: $position")
         }
     }

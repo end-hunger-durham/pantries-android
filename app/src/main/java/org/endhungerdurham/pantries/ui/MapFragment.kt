@@ -9,10 +9,11 @@ import com.google.android.gms.maps.MapView
 import android.content.pm.PackageManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
+import android.support.v7.widget.SearchView
 import android.view.*
 import android.widget.ProgressBar
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -21,12 +22,14 @@ import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
-private val DEFAULT_ZOOM = 11.5f
+private const val DEFAULT_ZOOM = 11.5f
+private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
-private val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
-private val KEY_CAMERA_POSITION = "camera_position"
-private val KEY_LOCATION = "location"
+private const val KEY_CAMERA_POSITION = "camera_position"
+private const val KEY_LOCATION = "location"
+private const val KEY_SEARCH_QUERY = "search_query"
+
 
 // TODO: Change icon color depending on whether it is open/closed
 class MapFragment : Fragment() {
@@ -34,6 +37,7 @@ class MapFragment : Fragment() {
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
     private var mMapView: MapView ?= null
+    private var mSearchQuery: String ?= null
     private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,10 +45,13 @@ class MapFragment : Fragment() {
 
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
 
-        if (savedInstanceState != null) {
-            mLastLocation = savedInstanceState.getParcelable(KEY_LOCATION)
-            mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(savedInstanceState.getParcelable(KEY_CAMERA_POSITION)))
+        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
+        mLastLocation = savedInstanceState?.getParcelable(KEY_LOCATION)
+        savedInstanceState?.getParcelable<CameraPosition>(KEY_CAMERA_POSITION)?.let {
+            mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(it))
         }
+
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -90,16 +97,11 @@ class MapFragment : Fragment() {
             })
 
             it.setOnInfoWindowClickListener { marker ->
-                val viewPager = requireActivity().findViewById<ViewPager>(R.id.viewpager)
-                viewPager.post{
-                    viewPager.arrowScroll(View.FOCUS_RIGHT)
-                }
-
-                val fragmentTransaction = childFragmentManager.beginTransaction()
-                fragmentTransaction.add(R.id.fragment_wrapper, DetailsFragment.newInstance(marker.tag as? Pantry))
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                fragmentTransaction.addToBackStack(null)
-                fragmentTransaction.commit()
+                val fragmentTransaction = fragmentManager?.beginTransaction()
+                fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
+                fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                fragmentTransaction?.addToBackStack(null)
+                fragmentTransaction?.commit()
             }
 
             model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
@@ -116,6 +118,40 @@ class MapFragment : Fragment() {
         }
 
         return rootView
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.main_menu, menu)
+        requireActivity().title = getString(R.string.app_name)
+
+        val searchItem = menu?.findItem(R.id.action_search)
+        val searchView = searchItem?.actionView as SearchView
+        if (!mSearchQuery.isNullOrEmpty()) {
+            searchItem.expandActionView()
+            searchView.setQuery(mSearchQuery, false)
+            searchView.clearFocus()
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextChange(query: String): Boolean {
+                if (isVisible) {
+                    mSearchQuery = query
+                    model.filter(query)
+                }
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                mSearchQuery = query
+                model.filter(query)
+
+                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
+                // see https://code.google.com/p/android/issues/detail?id=24599
+                searchView.clearFocus()
+                return true
+            }
+        })
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun getLocationPermission(): Boolean {
@@ -180,6 +216,9 @@ class MapFragment : Fragment() {
         mMap?.let {
             outState.putParcelable(KEY_CAMERA_POSITION, it.cameraPosition)
             outState.putParcelable(KEY_LOCATION, mLastLocation)
+        }
+        if (!mSearchQuery.isNullOrEmpty()) {
+            outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
         }
         super.onSaveInstanceState(outState)
         mMapView?.onSaveInstanceState(outState)

@@ -79,8 +79,9 @@ class DetailsFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        requireActivity().title = mPantry?.organizations ?: "Pantry"
         super.onCreateOptionsMenu(menu, inflater)
+        menu?.clear()
+        requireActivity().title = mPantry?.organizations ?: "Pantry"
     }
 
     private fun fillDetails(view: View, pantry: Pantry?) {
