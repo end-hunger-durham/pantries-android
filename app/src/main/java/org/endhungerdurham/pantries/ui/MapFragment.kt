@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.SearchView
 import android.view.*
 import android.widget.ProgressBar
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.info_window_item.view.*
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val DEFAULT_ZOOM = 11.5f
@@ -65,15 +67,21 @@ class MapFragment : Fragment() {
         mMapView?.onCreate(savedInstanceState)
         mMapView?.onResume()
 
+        model.networkState.observe(this, Observer { result ->
+            when (result) {
+                NetworkState.SUCCESS -> loading?.visibility = ProgressBar.GONE
+                NetworkState.LOADING -> loading?.visibility = ProgressBar.VISIBLE
+                NetworkState.FAILURE -> {
+                    Toast.makeText(rootView.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
+                    loading?.visibility = ProgressBar.GONE
+                }
+            }
+        })
+
         mMapView?.getMapAsync{
             mMap = it
             updateMyLocationUI()
             updateCamera(DURHAM_NC)
-
-            it.setOnMapLoadedCallback {
-                mMapView?.visibility = View.VISIBLE
-                loading?.visibility = View.GONE
-            }
 
             it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter{
                 override fun getInfoContents(p0: Marker?): View? {

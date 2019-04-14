@@ -12,7 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.Toast
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
@@ -56,17 +56,13 @@ class ListFragment : Fragment() {
         })
 
         model.networkState.observe(this, Observer { result ->
-            val errorLoading = view.findViewById(R.id.error) as? TextView
-            val pb = view.findViewById(R.id.pbLoading) as? ProgressBar
+            val loading = view.findViewById(R.id.pbLoading) as? ProgressBar
             when (result) {
-                NetworkState.SUCCESS -> {
-                    errorLoading?.visibility = TextView.GONE
-                    pb?.visibility = ProgressBar.GONE
-                }
-                NetworkState.LOADING -> pb?.visibility = ProgressBar.VISIBLE
+                NetworkState.SUCCESS -> loading?.visibility = ProgressBar.GONE
+                NetworkState.LOADING -> loading?.visibility = ProgressBar.VISIBLE
                 NetworkState.FAILURE -> {
-                    errorLoading?.visibility = TextView.VISIBLE
-                    pb?.visibility = ProgressBar.GONE
+                    Toast.makeText(view.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
+                    loading?.visibility = ProgressBar.GONE
                 }
             }
         })
