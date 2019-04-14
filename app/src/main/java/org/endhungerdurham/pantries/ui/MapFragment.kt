@@ -97,6 +97,9 @@ class MapFragment : Fragment() {
             })
 
             it.setOnInfoWindowClickListener { marker ->
+                // reset search query
+                mSearchQuery = null
+
                 val fragmentTransaction = fragmentManager?.beginTransaction()
                 fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
                 fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -129,7 +132,7 @@ class MapFragment : Fragment() {
 
         val searchItem = menu?.findItem(R.id.action_search)
         val searchView = searchItem?.actionView as SearchView
-        if (!mSearchQuery.isNullOrEmpty()) {
+        if (!mSearchQuery.isNullOrBlank()) {
             searchItem.expandActionView()
             searchView.setQuery(mSearchQuery, false)
             searchView.clearFocus()
