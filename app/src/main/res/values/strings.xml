@@ -9,4 +9,5 @@
     <string name="qualifications">Qualifications</string>
     <string name="search">Search</string>
     <string name="error_loading">Could not load pantries. Check internet connection and refresh.</string>
+    <string name="refresh">Refresh</string>
 </resources>

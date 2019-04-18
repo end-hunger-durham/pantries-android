@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import android.content.pm.PackageManager
+import android.graphics.PorterDuff
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.SearchView
@@ -131,6 +132,15 @@ class MapFragment : Fragment() {
         return rootView
     }
 
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_refresh -> {
+            model.reloadPantries()
+            true
+        }
+
+        else -> super.onOptionsItemSelected(item)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.clear()
@@ -138,7 +148,16 @@ class MapFragment : Fragment() {
         inflater?.inflate(R.menu.main_menu, menu)
         requireActivity().title = getString(R.string.app_name)
 
+        val refreshItem = menu?.findItem(R.id.action_refresh)
+        val refreshIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_cached_24px)
+        refreshIcon?.setColorFilter(ContextCompat.getColor(requireContext(), R.color.menu), PorterDuff.Mode.SRC_ATOP)
+        refreshItem?.icon = refreshIcon
+
         val searchItem = menu?.findItem(R.id.action_search)
+        val searchIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24px)
+        searchIcon?.setColorFilter(ContextCompat.getColor(requireContext(), R.color.menu), PorterDuff.Mode.SRC_ATOP)
+        searchItem?.icon = searchIcon
+
         val searchView = searchItem?.actionView as SearchView
         if (!mSearchQuery.isNullOrBlank()) {
             searchItem.expandActionView()
