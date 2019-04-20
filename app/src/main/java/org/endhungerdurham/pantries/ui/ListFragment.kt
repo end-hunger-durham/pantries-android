@@ -45,18 +45,25 @@ class ListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        val swipeContainer = view.findViewById(R.id.list_refresh) as? SwipeRefreshLayout
+        view?.findViewById<RecyclerView>(R.id.list)?.apply {
+            addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
+            layoutManager = LinearLayoutManager(context)
+        }
+
+        return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)
         swipeContainer?.setOnRefreshListener {
             model.reloadPantries()
             swipeContainer.isRefreshing = false
         }
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.list)?.apply {
-            addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
-            layoutManager = LinearLayoutManager(context)
-        }
-
         model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
+            val recyclerView = view?.findViewById<RecyclerView>(R.id.list)
             recyclerView?.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
         })
 
@@ -65,13 +72,11 @@ class ListFragment : Fragment() {
                 NetworkState.SUCCESS -> setRefreshing(false)
                 NetworkState.LOADING -> setRefreshing(true)
                 NetworkState.FAILURE -> {
-                    Toast.makeText(view.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(view?.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
                     setRefreshing(false)
                 }
             }
         })
-
-        return view
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {

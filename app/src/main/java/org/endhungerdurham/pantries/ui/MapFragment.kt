@@ -71,7 +71,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onStart()
         mMapView?.onStart()
 
-        val swipeContainer = view?.findViewById(R.id.map_refresh) as? SwipeRefreshLayout
+        val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.map_refresh)
         swipeContainer?.setOnRefreshListener(null)
         swipeContainer?.isEnabled = false
 
