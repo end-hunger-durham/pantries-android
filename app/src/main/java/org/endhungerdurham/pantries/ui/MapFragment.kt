@@ -55,25 +55,30 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_map, container, false)
 
-        val loading = rootView.findViewById(R.id.fragment_map_loading) as? ProgressBar
-        loading?.visibility = View.VISIBLE
-
         mMapView = rootView.findViewById(R.id.fragment_map_view)
         mMapView?.onCreate(savedInstanceState)
         mMapView?.getMapAsync(this)
+
+        return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mMapView?.onStart()
+
+        val loading = view?.findViewById(R.id.fragment_map_loading) as? ProgressBar
+        loading?.visibility = View.VISIBLE
 
         model.networkState.observe(this, Observer { result ->
             when (result) {
                 NetworkState.SUCCESS -> loading?.visibility = ProgressBar.GONE
                 NetworkState.LOADING -> loading?.visibility = ProgressBar.VISIBLE
                 NetworkState.FAILURE -> {
-                    Toast.makeText(rootView.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(view?.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
                     loading?.visibility = ProgressBar.GONE
                 }
             }
         })
-
-        return rootView
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -227,11 +232,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         ?.tag = pantry
             }
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mMapView?.onStart()
     }
 
     override fun onResume() {
