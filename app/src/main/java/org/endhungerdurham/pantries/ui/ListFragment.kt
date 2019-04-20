@@ -68,11 +68,7 @@ class ListFragment : Fragment() {
                         swipeContainer?.isRefreshing = false
                     }
                 }
-                NetworkState.LOADING -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        swipeContainer?.isRefreshing = true
-                    }
-                }
+                NetworkState.LOADING -> swipeContainer?.isRefreshing = true
                 NetworkState.FAILURE -> {
                     Toast.makeText(view.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
                     CoroutineScope(Dispatchers.Main).launch {
