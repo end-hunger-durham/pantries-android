@@ -14,6 +14,8 @@ import android.net.Uri
 import android.support.design.widget.TabLayout
 import android.view.*
 import android.widget.ProgressBar
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
@@ -21,7 +23,7 @@ import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 private const val ARG_PANTRY = "pantry"
 private const val DEFAULT_ZOOM = 16.0f
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
     private var mPantry: Pantry?= null
@@ -39,45 +41,35 @@ class DetailsFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-        val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
-        mPantry = pantry
+        mPantry = arguments?.getParcelable(ARG_PANTRY)
 
-        val loading = view.findViewById(R.id.fragment_details_map_loading) as? ProgressBar
-        loading?.visibility = View.VISIBLE
-
-        val map = view.findViewById(R.id.fragment_details_map_view) as? MapView
+        val map = view.findViewById<MapView>(R.id.fragment_details_map_view)
         map?.onCreate(savedInstanceState)
         map?.visibility = View.INVISIBLE
-        map?.getMapAsync {
-            pantry?.let { pantry ->
-                val pos = LatLng(pantry.latitude, pantry.longitude)
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
-                it.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
-            }
-
-            it.setOnMapLoadedCallback {
-                map.visibility = View.VISIBLE
-                loading?.visibility = View.GONE
-            }
-        }
-
-        val phone: Button = view.findViewById(R.id.phone)
-        if (pantry?.phone == null || pantry.phone == "") {
-            phone.visibility = View.GONE
-        } else {
-            phone.text = pantry.phone
-            phone.setOnClickListener{
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", pantry.phone, null)))
-            }
-        }
-
-        fillDetails(view, pantry)
+        map?.getMapAsync(this)
 
         return view
     }
 
     override fun onStart() {
         super.onStart()
+
+        val loading = view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)
+        loading?.visibility = View.VISIBLE
+
+        val phoneButton = view?.findViewById<Button>(R.id.phone)
+        val phoneData = mPantry?.phone
+        if (phoneData.isNullOrBlank()) {
+            phoneButton?.visibility = View.GONE
+        } else {
+            phoneButton?.text = phoneData
+            phoneButton?.setOnClickListener{
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneData, null)))
+            }
+        }
+
+        fillDetails(mPantry)
+
         requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
     }
 
@@ -87,18 +79,31 @@ class DetailsFragment : Fragment() {
         requireActivity().title = mPantry?.organizations ?: "Pantry"
     }
 
-    private fun fillDetails(view: View, pantry: Pantry?) {
-        val addressText = view.findViewById<TextView>(R.id.address_field)
-        addressText.append("${pantry?.address} ${pantry?.city}")
+    override fun onMapReady(map: GoogleMap?) {
+        mPantry?.let { pantry ->
+            val pos = LatLng(pantry.latitude, pantry.longitude)
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
+            map?.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
+        }
 
-        val availabilityText = view.findViewById<TextView>(R.id.availability_field)
-        availabilityText.append("${pantry?.days} ${pantry?.hours}")
+        map?.setOnMapLoadedCallback {
+            view?.findViewById<MapView>(R.id.fragment_details_map_view)?.visibility = View.VISIBLE
+            view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)?.visibility = View.GONE
+        }
+    }
 
-        val qualificationsText = view.findViewById<TextView>(R.id.qualifications_field)
-        qualificationsText.append("${pantry?.prereq}")
+    private fun fillDetails(pantry: Pantry?) {
+        val addressText = view?.findViewById<TextView>(R.id.address_field)
+        addressText?.append("${pantry?.address} ${pantry?.city}")
 
-        val infoText = view.findViewById<TextView>(R.id.info_field)
-        infoText.append("${pantry?.info}")
+        val availabilityText = view?.findViewById<TextView>(R.id.availability_field)
+        availabilityText?.append("${pantry?.days} ${pantry?.hours}")
+
+        val qualificationsText = view?.findViewById<TextView>(R.id.qualifications_field)
+        qualificationsText?.append("${pantry?.prereq}")
+
+        val infoText = view?.findViewById<TextView>(R.id.info_field)
+        infoText?.append("${pantry?.info}")
     }
 
     companion object {
