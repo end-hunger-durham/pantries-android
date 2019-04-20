@@ -11,9 +11,7 @@
         android:scaleX="0.25"
         android:scaleY="0.25" />
 
-    <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <com.google.android.gms.maps.MapView xmlns:map="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fragment_map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

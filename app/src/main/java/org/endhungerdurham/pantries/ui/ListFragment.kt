@@ -11,8 +11,11 @@ import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
-import android.widget.ProgressBar
 import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
@@ -40,7 +43,7 @@ class ListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        val swipeContainer = view.findViewById(R.id.listWrapper) as? SwipeRefreshLayout
+        val swipeContainer = view.findViewById(R.id.list_refresh) as? SwipeRefreshLayout
         swipeContainer?.setOnRefreshListener {
             model.reloadPantries()
             swipeContainer.isRefreshing = false
@@ -56,13 +59,24 @@ class ListFragment : Fragment() {
         })
 
         model.networkState.observe(this, Observer { result ->
-            val loading = view.findViewById(R.id.pbLoading) as? ProgressBar
             when (result) {
-                NetworkState.SUCCESS -> loading?.visibility = ProgressBar.GONE
-                NetworkState.LOADING -> loading?.visibility = ProgressBar.VISIBLE
+                NetworkState.SUCCESS -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(1000)
+                        swipeContainer?.isRefreshing = false
+                    }
+                }
+                NetworkState.LOADING -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        swipeContainer?.isRefreshing = true
+                    }
+                }
                 NetworkState.FAILURE -> {
                     Toast.makeText(view.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
-                    loading?.visibility = ProgressBar.GONE
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(1000)
+                        swipeContainer?.isRefreshing = false
+                    }
                 }
             }
         })
