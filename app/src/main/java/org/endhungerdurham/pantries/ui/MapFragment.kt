@@ -35,7 +35,6 @@ private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
 private const val KEY_LOCATION = "location"
-private const val KEY_SEARCH_QUERY = "search_query"
 
 // TODO: Change icon color depending on whether it is open/closed
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -43,17 +42,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
     private var mMapView: MapView ?= null
-    private var mSearchQuery: String ?= null
     private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
-
-        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
         mLastLocation = savedInstanceState?.getParcelable(KEY_LOCATION)
-
         setHasOptionsMenu(true)
     }
 
@@ -105,75 +99,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 swipeContainer?.isRefreshing = true
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_refresh -> {
-            model.reloadPantries()
-            true
-        }
-
-        else -> super.onOptionsItemSelected(item)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
-
-        inflater?.inflate(R.menu.main_menu, menu)
-        requireActivity().title = getString(R.string.app_name)
-
-        val refreshItem = menu?.findItem(R.id.action_refresh)
-        val refreshIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_cached_24px)
-        refreshIcon?.setColorFilter(ContextCompat.getColor(requireContext(), R.color.menu), PorterDuff.Mode.SRC_ATOP)
-        refreshItem?.icon = refreshIcon
-
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_search_24px)
-        searchIcon?.setColorFilter(ContextCompat.getColor(requireContext(), R.color.menu), PorterDuff.Mode.SRC_ATOP)
-        searchItem?.icon = searchIcon
-
-        val searchView = searchItem?.actionView as SearchView
-        if (!mSearchQuery.isNullOrBlank()) {
-            searchItem.expandActionView()
-            searchView.setQuery(mSearchQuery, false)
-            searchView.clearFocus()
-            refreshItem?.isVisible = false
-        }
-
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                refreshItem?.isVisible = true
-                requireActivity().invalidateOptionsMenu()
-                return true
-            }
-
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                refreshItem?.isVisible = false
-                requireActivity().invalidateOptionsMenu()
-                return true
-            }
-        })
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextChange(query: String): Boolean {
-                if (isVisible) {
-                    mSearchQuery = query
-                    model.filter(query)
-                }
-                return true
-            }
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                mSearchQuery = query
-                model.filter(query)
-
-                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
-                // see https://code.google.com/p/android/issues/detail?id=24599
-                searchView.clearFocus()
-                return true
-            }
-        })
     }
 
     private fun getLocationPermission(): Boolean {
@@ -237,9 +162,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         })
 
         map?.setOnInfoWindowClickListener { marker ->
-            // reset search query
-            mSearchQuery = null
-
             val fragmentTransaction = fragmentManager?.beginTransaction()
             fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
             fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -288,9 +210,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onSaveInstanceState(outState: Bundle) {
         mMap?.cameraPosition?.let {
             outState.putParcelable(KEY_LOCATION, it)
-        }
-        if (!mSearchQuery.isNullOrEmpty()) {
-            outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
         }
         super.onSaveInstanceState(outState)
         mMapView?.onSaveInstanceState(outState)
