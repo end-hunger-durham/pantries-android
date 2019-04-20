@@ -22,6 +22,8 @@ import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
 import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
+private const val REFRESH_ANIMATION_DELAY: Long = 1000
+
 /**
  * A fragment representing a list of Items.
  * Activities containing this fragment MUST implement the
@@ -62,7 +64,7 @@ class ListFragment : Fragment() {
             when (result) {
                 NetworkState.SUCCESS -> {
                     CoroutineScope(Dispatchers.Main).launch {
-                        delay(1000)
+                        delay(REFRESH_ANIMATION_DELAY)
                         swipeContainer?.isRefreshing = false
                     }
                 }
@@ -74,7 +76,7 @@ class ListFragment : Fragment() {
                 NetworkState.FAILURE -> {
                     Toast.makeText(view.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
                     CoroutineScope(Dispatchers.Main).launch {
-                        delay(1000)
+                        delay(REFRESH_ANIMATION_DELAY)
                         swipeContainer?.isRefreshing = false
                     }
                 }
