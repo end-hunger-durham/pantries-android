@@ -4,8 +4,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v4.app.Fragment
 import android.os.Bundle
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.support.v4.app.FragmentTransaction
@@ -14,7 +12,7 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import android.widget.ProgressBar
 import android.widget.Toast
-import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -26,17 +24,16 @@ import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val DEFAULT_ZOOM = 11.5f
-private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 
-private const val KEY_CAMERA_POSITION = "camera_position"
+private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+
 private const val KEY_LOCATION = "location"
 private const val KEY_SEARCH_QUERY = "search_query"
 
-
 // TODO: Change icon color depending on whether it is open/closed
-class MapFragment : Fragment() {
-    private var mLastLocation: LatLng ?= null
+class MapFragment : Fragment(), OnMapReadyCallback {
+    private var mLastLocation: CameraPosition ?= null
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
     private var mMapView: MapView ?= null
@@ -50,9 +47,6 @@ class MapFragment : Fragment() {
 
         mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
         mLastLocation = savedInstanceState?.getParcelable(KEY_LOCATION)
-        savedInstanceState?.getParcelable<CameraPosition>(KEY_CAMERA_POSITION)?.let {
-            mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(it))
-        }
 
         setHasOptionsMenu(true)
     }
@@ -66,7 +60,7 @@ class MapFragment : Fragment() {
 
         mMapView = rootView.findViewById(R.id.fragment_map_view)
         mMapView?.onCreate(savedInstanceState)
-        mMapView?.onResume()
+        mMapView?.getMapAsync(this)
 
         model.networkState.observe(this, Observer { result ->
             when (result) {
@@ -78,56 +72,6 @@ class MapFragment : Fragment() {
                 }
             }
         })
-
-        mMapView?.getMapAsync{
-            mMap = it
-            updateMyLocationUI()
-            updateCamera(DURHAM_NC)
-
-            it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter{
-                override fun getInfoContents(p0: Marker?): View? {
-                    val infoView = inflater.inflate(R.layout.info_window_item, container, false)
-                    val pantry: Pantry? = p0?.tag as? Pantry?
-
-                    infoView.info_org.text = pantry?.organizations
-
-                    val days = "Days: ${pantry?.days}"
-                    infoView.info_days.text = days
-
-                    val hours = "Hours: ${pantry?.hours}"
-                    infoView.info_hours.text = hours
-
-                    return infoView
-                }
-
-                override fun getInfoWindow(p0: Marker?): View? {
-                    return null
-                }
-            })
-
-            it.setOnInfoWindowClickListener { marker ->
-                // reset search query
-                mSearchQuery = null
-
-                val fragmentTransaction = fragmentManager?.beginTransaction()
-                fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
-                fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                fragmentTransaction?.addToBackStack(null)
-                fragmentTransaction?.commit()
-            }
-
-            model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
-                mMap?.clear()
-
-                for (pantry in pantries ?: emptyList()) {
-                    mMap?.addMarker(MarkerOptions()
-                            .position(LatLng(pantry.latitude, pantry.longitude))
-                            .title(pantry.organizations)
-                            .alpha(0.75f))
-                            ?.tag = pantry
-                }
-            })
-        }
 
         return rootView
     }
@@ -163,6 +107,7 @@ class MapFragment : Fragment() {
             searchItem.expandActionView()
             searchView.setQuery(mSearchQuery, false)
             searchView.clearFocus()
+            refreshItem?.isVisible = false
         }
 
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
@@ -201,19 +146,14 @@ class MapFragment : Fragment() {
     }
 
     private fun getLocationPermission(): Boolean {
-        if (ContextCompat.checkSelfPermission(requireContext(),
+        return if (ContextCompat.checkSelfPermission(requireContext(),
                         android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true
-            return true
+            true
         } else {
             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
-            return false
+            false
         }
-    }
-
-    private fun updateCamera(pos: LatLng) {
-        mLastLocation = pos
-        mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
     }
 
     private fun updateMyLocationUI() {
@@ -226,8 +166,7 @@ class MapFragment : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
@@ -238,6 +177,63 @@ class MapFragment : Fragment() {
         }
     }
 
+    override fun onMapReady(map: GoogleMap?) {
+        mMap = map
+        updateMyLocationUI()
+
+        val cameraPosition = mLastLocation ?: CameraPosition.Builder().target(DURHAM_NC).zoom(DEFAULT_ZOOM).build()
+        mMap?.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
+        map?.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter{
+            override fun getInfoContents(p0: Marker?): View? {
+                val infoView = layoutInflater.inflate(R.layout.info_window_item, view?.parent as ViewGroup, false)
+                val pantry: Pantry? = p0?.tag as? Pantry?
+
+                infoView.info_org.text = pantry?.organizations
+
+                val days = "Days: ${pantry?.days}"
+                infoView.info_days.text = days
+
+                val hours = "Hours: ${pantry?.hours}"
+                infoView.info_hours.text = hours
+
+                return infoView
+            }
+
+            override fun getInfoWindow(p0: Marker?): View? {
+                return null
+            }
+        })
+
+        map?.setOnInfoWindowClickListener { marker ->
+            // reset search query
+            mSearchQuery = null
+
+            val fragmentTransaction = fragmentManager?.beginTransaction()
+            fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
+            fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            fragmentTransaction?.addToBackStack(null)
+            fragmentTransaction?.commit()
+        }
+
+        model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
+            mMap?.clear()
+
+            for (pantry in pantries ?: emptyList()) {
+                mMap?.addMarker(MarkerOptions()
+                        .position(LatLng(pantry.latitude, pantry.longitude))
+                        .title(pantry.organizations)
+                        .alpha(0.75f))
+                        ?.tag = pantry
+            }
+        })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mMapView?.onStart()
+    }
+
     override fun onResume() {
         super.onResume()
         mMapView?.onResume()
@@ -246,6 +242,11 @@ class MapFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         mMapView?.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMapView?.onStop()
     }
 
     override fun onDestroy() {
@@ -259,9 +260,8 @@ class MapFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        mMap?.let {
-            outState.putParcelable(KEY_CAMERA_POSITION, it.cameraPosition)
-            outState.putParcelable(KEY_LOCATION, mLastLocation)
+        mMap?.cameraPosition?.let {
+            outState.putParcelable(KEY_LOCATION, it)
         }
         if (!mSearchQuery.isNullOrEmpty()) {
             outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
