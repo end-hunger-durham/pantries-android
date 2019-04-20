@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
@@ -55,6 +56,8 @@ class ListFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
 
         val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)
         swipeContainer?.setOnRefreshListener {

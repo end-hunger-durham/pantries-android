@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.os.Bundle
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
+import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -70,6 +71,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
         mMapView?.onStart()
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
 
         val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.map_refresh)
         swipeContainer?.setOnRefreshListener(null)

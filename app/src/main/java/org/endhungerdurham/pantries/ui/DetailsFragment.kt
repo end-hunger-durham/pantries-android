@@ -39,8 +39,6 @@ class DetailsFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
-
         val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
         mPantry = pantry
 
@@ -78,6 +76,11 @@ class DetailsFragment : Fragment() {
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.clear()
@@ -96,11 +99,6 @@ class DetailsFragment : Fragment() {
 
         val infoText = view.findViewById<TextView>(R.id.info_field)
         infoText.append("${pantry?.info}")
-    }
-
-    override fun onDestroyView() {
-        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
-        super.onDestroyView()
     }
 
     companion object {
