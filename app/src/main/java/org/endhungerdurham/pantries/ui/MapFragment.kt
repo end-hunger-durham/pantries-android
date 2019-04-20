@@ -165,6 +165,20 @@ class MapFragment : Fragment() {
             searchView.clearFocus()
         }
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                refreshItem?.isVisible = true
+                requireActivity().invalidateOptionsMenu()
+                return true
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                refreshItem?.isVisible = false
+                requireActivity().invalidateOptionsMenu()
+                return true
+            }
+        })
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextChange(query: String): Boolean {
                 if (isVisible) {
