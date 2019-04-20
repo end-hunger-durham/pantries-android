@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.SearchView
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
