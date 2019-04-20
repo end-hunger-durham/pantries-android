@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/fragment_map_loading"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleX="0.25"
-        android:scaleY="0.25" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/map_refresh"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <com.google.android.gms.maps.MapView xmlns:map="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/fragment_map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        map:cameraZoom="13"
-        tools:context=".ui.MapFragment" />
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/fragment_map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cameraZoom="13"
+            tools:context=".ui.MapFragment" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.constraint.ConstraintLayout>

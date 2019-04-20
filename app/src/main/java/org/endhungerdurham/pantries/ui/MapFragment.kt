@@ -8,9 +8,9 @@ import android.content.pm.PackageManager
 import android.graphics.PorterDuff
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.SearchView
 import android.view.*
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.CameraPosition
@@ -18,11 +18,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.info_window_item.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
+private const val REFRESH_ANIMATION_DELAY: Long = 1000
 private const val DEFAULT_ZOOM = 11.5f
 private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
 
@@ -66,19 +71,37 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onStart()
         mMapView?.onStart()
 
-        val loading = view?.findViewById(R.id.fragment_map_loading) as? ProgressBar
-        loading?.visibility = View.VISIBLE
+        val swipeContainer = view?.findViewById(R.id.map_refresh) as? SwipeRefreshLayout
+        swipeContainer?.setOnRefreshListener(null)
+        swipeContainer?.isEnabled = false
 
         model.networkState.observe(this, Observer { result ->
             when (result) {
-                NetworkState.SUCCESS -> loading?.visibility = ProgressBar.GONE
-                NetworkState.LOADING -> loading?.visibility = ProgressBar.VISIBLE
+                NetworkState.SUCCESS -> setRefreshing(false)
+                NetworkState.LOADING -> setRefreshing(true)
                 NetworkState.FAILURE -> {
                     Toast.makeText(view?.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
-                    loading?.visibility = ProgressBar.GONE
+                    setRefreshing(false)
                 }
             }
         })
+    }
+
+    private fun setRefreshing(isRefreshing: Boolean) {
+        val swipeContainer = view?.findViewById(R.id.map_refresh) as? SwipeRefreshLayout
+        when (isRefreshing) {
+            false -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(REFRESH_ANIMATION_DELAY)
+                    swipeContainer?.isRefreshing = false
+                    swipeContainer?.isEnabled = false
+                }
+            }
+            true -> {
+                swipeContainer?.isEnabled = true
+                swipeContainer?.isRefreshing = true
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

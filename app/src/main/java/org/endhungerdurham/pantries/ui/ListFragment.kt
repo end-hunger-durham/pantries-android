@@ -62,24 +62,29 @@ class ListFragment : Fragment() {
 
         model.networkState.observe(this, Observer { result ->
             when (result) {
-                NetworkState.SUCCESS -> {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(REFRESH_ANIMATION_DELAY)
-                        swipeContainer?.isRefreshing = false
-                    }
-                }
-                NetworkState.LOADING -> swipeContainer?.isRefreshing = true
+                NetworkState.SUCCESS -> setRefreshing(false)
+                NetworkState.LOADING -> setRefreshing(true)
                 NetworkState.FAILURE -> {
                     Toast.makeText(view.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
-                    CoroutineScope(Dispatchers.Main).launch {
-                        delay(REFRESH_ANIMATION_DELAY)
-                        swipeContainer?.isRefreshing = false
-                    }
+                    setRefreshing(false)
                 }
             }
         })
 
         return view
+    }
+
+    private fun setRefreshing(isRefreshing: Boolean) {
+        val swipeContainer = view?.findViewById(R.id.list_refresh) as? SwipeRefreshLayout
+        when (isRefreshing) {
+            false -> {
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(REFRESH_ANIMATION_DELAY)
+                    swipeContainer?.isRefreshing = false
+                }
+            }
+            true -> swipeContainer?.isRefreshing = true
+        }
     }
 
     override fun onAttach(context: Context) {
