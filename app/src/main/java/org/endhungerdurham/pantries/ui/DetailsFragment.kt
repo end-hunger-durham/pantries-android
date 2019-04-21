@@ -26,6 +26,7 @@ private const val DEFAULT_ZOOM = 16.0f
 class DetailsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
+    private var mMapView: MapView ?= null
     private var mPantry: Pantry?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,19 +44,10 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
 
         mPantry = arguments?.getParcelable(ARG_PANTRY)
 
-        val map = view.findViewById<MapView>(R.id.fragment_details_map_view)
-        map?.onCreate(savedInstanceState)
-        map?.visibility = View.INVISIBLE
-        map?.getMapAsync(this)
-
-        return view
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        val loading = view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)
-        loading?.visibility = View.VISIBLE
+        mMapView = view.findViewById(R.id.fragment_details_map_view)
+        mMapView?.onCreate(savedInstanceState)
+        mMapView?.visibility = View.INVISIBLE
+        mMapView?.getMapAsync(this)
 
         val phoneButton = view?.findViewById<Button>(R.id.phone)
         val phoneData = mPantry?.phone
@@ -68,7 +60,17 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        fillDetails(mPantry)
+        fillDetails(view, mPantry)
+
+        return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mMapView?.onStart()
+
+        val loading = view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)
+        loading?.visibility = View.VISIBLE
 
         requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
     }
@@ -92,7 +94,7 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun fillDetails(pantry: Pantry?) {
+    private fun fillDetails(view: View?, pantry: Pantry?) {
         val addressText = view?.findViewById<TextView>(R.id.address_field)
         addressText?.append("${pantry?.address} ${pantry?.city}")
 
@@ -104,6 +106,36 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
 
         val infoText = view?.findViewById<TextView>(R.id.info_field)
         infoText?.append("${pantry?.info}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mMapView?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mMapView?.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMapView?.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mMapView?.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mMapView?.onLowMemory()
     }
 
     companion object {
