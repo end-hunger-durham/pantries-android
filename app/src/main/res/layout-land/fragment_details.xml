@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailsFragment">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         android:id="@+id/fragment_details_map_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -23,7 +23,7 @@
             android:scaleX="0.5"
             android:scaleY="0.5" />
 
-        <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.google.android.gms.maps.MapView
             xmlns:map="http://schemas.android.com/apk/res-auto"
             android:id="@+id/fragment_details_map_view"
             android:layout_width="match_parent"
@@ -158,7 +158,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="?android:attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_phone"
+        android:drawableStart="@drawable/ic_baseline_local_phone_24px"
         android:drawablePadding="@dimen/text_margin"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"

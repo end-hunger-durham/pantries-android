@@ -51,7 +51,8 @@ ext {
     coroutines_version = '1.1.0'
     serialization_version = '0.9.1'
     lifecycle_version = "1.1.1"
-    playServicesVersion = '16.0.0'
+    playServicesLocation = '16.0.0'
+    playServicesMaps = '16.1.0'
     supportLibVersion = '28.0.0'
 }
 
@@ -71,8 +72,8 @@ dependencies {
     implementation "com.android.support:design:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
     implementation "com.android.support:support-v4:${supportLibVersion}"
-    implementation "com.google.android.gms:play-services-location:${playServicesVersion}"
-    implementation "com.google.android.gms:play-services-maps:${playServicesVersion}"
+    implementation "com.google.android.gms:play-services-location:${playServicesLocation}"
+    implementation "com.google.android.gms:play-services-maps:${playServicesMaps}"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

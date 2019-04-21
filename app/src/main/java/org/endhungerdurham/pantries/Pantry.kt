@@ -22,35 +22,27 @@ data class Pantry(val organizations: String, val address: String, val city: Stri
             parcel.readString(),
             parcel.readString(),
             parcel.readDouble(),
-            parcel.readDouble()) {
+            parcel.readDouble())
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) = with(parcel) {
+        writeString(organizations)
+        writeString(address)
+        writeString(city)
+        writeString(days)
+        writeString(hours)
+        writeString(phone)
+        writeString(info)
+        writeString(prereq)
+        writeDouble(latitude)
+        writeDouble(longitude)
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(organizations)
-        parcel.writeString(address)
-        parcel.writeString(city)
-        parcel.writeString(days)
-        parcel.writeString(hours)
-        parcel.writeString(phone)
-        parcel.writeString(info)
-        parcel.writeString(prereq)
-        parcel.writeDouble(latitude)
-        parcel.writeDouble(longitude)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
+    override fun describeContents() = 0
 
     companion object {
         @JvmField val CREATOR = object : Parcelable.Creator<Pantry> {
-            override fun createFromParcel(parcel: Parcel): Pantry {
-                return Pantry(parcel)
-            }
-
-            override fun newArray(size: Int): Array<Pantry?> {
-                return arrayOfNulls(size)
-            }
+            override fun createFromParcel(parcel: Parcel) = Pantry(parcel)
+            override fun newArray(size: Int): Array<Pantry?> = arrayOfNulls(size)
         }
     }
 }

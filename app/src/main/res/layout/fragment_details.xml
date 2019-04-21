@@ -157,7 +157,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="?android:attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_phone"
+        android:drawableStart="@drawable/ic_baseline_local_phone_24px"
         android:drawablePadding="@dimen/text_margin"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
