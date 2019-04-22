@@ -45,31 +45,24 @@ class ListFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        view?.findViewById<RecyclerView>(R.id.list)?.apply {
+
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.list)?.apply {
             addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
             layoutManager = LinearLayoutManager(context)
         }
 
-        return view
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
-
-        val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)
-        swipeContainer?.setOnRefreshListener {
-            model.reloadPantries()
-            swipeContainer.isRefreshing = false
-        }
-
-        model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
-            val recyclerView = view?.findViewById<RecyclerView>(R.id.list)
+        model.pantries.observe(viewLifecycleOwner, Observer<List<Pantry>> { pantries ->
             recyclerView?.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
         })
 
-        model.networkState.observe(this, Observer { result ->
+        view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)?.let {
+            it.setOnRefreshListener {
+                model.reloadPantries()
+                it.isRefreshing = false
+            }
+        }
+
+        model.networkState.observe(viewLifecycleOwner, Observer { result ->
             when (result) {
                 NetworkState.SUCCESS -> setRefreshing(false)
                 NetworkState.LOADING -> setRefreshing(true)
@@ -79,19 +72,14 @@ class ListFragment : Fragment() {
                 }
             }
         })
+
+        return view
     }
 
-    private fun setRefreshing(isRefreshing: Boolean) {
-        val swipeContainer = view?.findViewById(R.id.list_refresh) as? SwipeRefreshLayout
-        when (isRefreshing) {
-            false -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    delay(REFRESH_ANIMATION_DELAY)
-                    swipeContainer?.isRefreshing = false
-                }
-            }
-            true -> swipeContainer?.isRefreshing = true
-        }
+    override fun onStart() {
+        super.onStart()
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
     }
 
     override fun onAttach(context: Context) {
@@ -106,6 +94,20 @@ class ListFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         listener = null
+    }
+
+    private fun setRefreshing(isRefreshing: Boolean) {
+        view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)?.let {
+            when (isRefreshing) {
+                false -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(REFRESH_ANIMATION_DELAY)
+                        it.isRefreshing = false
+                    }
+                }
+                true -> it.isRefreshing = true
+            }
+        }
     }
 
     /**

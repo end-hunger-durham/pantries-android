@@ -56,20 +56,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMapView?.onCreate(savedInstanceState)
         mMapView?.getMapAsync(this)
 
-        return rootView
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mMapView?.onStart()
-
-        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
-
         val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.map_refresh)
         swipeContainer?.setOnRefreshListener(null)
         swipeContainer?.isEnabled = false
 
-        model.networkState.observe(this, Observer { result ->
+        model.networkState.observe(viewLifecycleOwner, Observer { result ->
             when (result) {
                 NetworkState.SUCCESS -> setRefreshing(false)
                 NetworkState.LOADING -> setRefreshing(true)
@@ -79,10 +70,19 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         })
+
+        return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mMapView?.onStart()
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {
-        val swipeContainer = view?.findViewById(R.id.map_refresh) as? SwipeRefreshLayout
+        val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.map_refresh)
         when (isRefreshing) {
             false -> {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -166,7 +166,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             fragmentTransaction?.commit()
         }
 
-        model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
+        model.pantries.observe(viewLifecycleOwner, Observer<List<Pantry>> { pantries ->
             mMap?.clear()
 
             for (pantry in pantries ?: emptyList()) {
@@ -194,9 +194,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMapView?.onStop()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mMap?.clear()
         mMapView?.onDestroy()
+        mMap = null
+        mMapView = null
     }
 
     override fun onLowMemory() {

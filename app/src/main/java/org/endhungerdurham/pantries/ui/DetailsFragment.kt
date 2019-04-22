@@ -123,8 +123,8 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
         mMapView?.onStop()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mMapView?.onDestroy()
     }
 
