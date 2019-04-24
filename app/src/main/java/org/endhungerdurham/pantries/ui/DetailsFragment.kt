@@ -126,6 +126,7 @@ class DetailsFragment : Fragment(), OnMapReadyCallback {
     override fun onDestroyView() {
         super.onDestroyView()
         mMapView?.onDestroy()
+        mMapView = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
