@@ -14,6 +14,8 @@ import android.net.Uri
 import android.support.design.widget.TabLayout
 import android.view.*
 import android.widget.ProgressBar
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
@@ -21,9 +23,10 @@ import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 private const val ARG_PANTRY = "pantry"
 private const val DEFAULT_ZOOM = 16.0f
 
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
+    private var mMapView: MapView ?= null
     private var mPantry: Pantry?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,67 +42,101 @@ class DetailsFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
+        mPantry = arguments?.getParcelable(ARG_PANTRY)
 
-        val pantry: Pantry? = arguments?.getParcelable(ARG_PANTRY)
-        mPantry = pantry
+        mMapView = view.findViewById(R.id.fragment_details_map_view)
+        mMapView?.onCreate(savedInstanceState)
+        mMapView?.visibility = View.INVISIBLE
+        mMapView?.getMapAsync(this)
 
-        val loading = view.findViewById(R.id.mapLoading) as? ProgressBar
-        loading?.visibility = View.VISIBLE
-
-        val map = view.findViewById(R.id.liteMapView) as? MapView
-        map?.onCreate(savedInstanceState)
-        map?.visibility = View.INVISIBLE
-        map?.getMapAsync {
-            pantry?.let { pantry ->
-                val pos = LatLng(pantry.latitude, pantry.longitude)
-                it.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
-                it.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
-            }
-
-            it.setOnMapLoadedCallback {
-                map.visibility = View.VISIBLE
-                loading?.visibility = View.GONE
-            }
-        }
-
-        val phone: Button = view.findViewById(R.id.phone)
-        if (pantry?.phone == null || pantry.phone == "") {
-            phone.visibility = View.GONE
+        val phoneButton = view?.findViewById<Button>(R.id.phone)
+        val phoneData = mPantry?.phone
+        if (phoneData.isNullOrBlank()) {
+            phoneButton?.visibility = View.GONE
         } else {
-            phone.text = pantry.phone
-            phone.setOnClickListener{
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", pantry.phone, null)))
+            phoneButton?.text = phoneData
+            phoneButton?.setOnClickListener{
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneData, null)))
             }
         }
 
-        fillDetails(view, pantry)
+        fillDetails(view, mPantry)
 
         return view
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        requireActivity().title = mPantry?.organizations ?: "Pantry"
-        super.onCreateOptionsMenu(menu, inflater)
+    override fun onStart() {
+        super.onStart()
+        mMapView?.onStart()
+
+        val loading = view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)
+        loading?.visibility = View.VISIBLE
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
     }
 
-    private fun fillDetails(view: View, pantry: Pantry?) {
-        val addressText = view.findViewById<TextView>(R.id.address_field)
-        addressText.append("${pantry?.address} ${pantry?.city}")
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu?.clear()
+        requireActivity().title = mPantry?.organizations ?: "Pantry"
+    }
 
-        val avaialabilityText = view.findViewById<TextView>(R.id.availability_field)
-        avaialabilityText.append("${pantry?.days} ${pantry?.hours}")
+    override fun onMapReady(map: GoogleMap?) {
+        mPantry?.let { pantry ->
+            val pos = LatLng(pantry.latitude, pantry.longitude)
+            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
+            map?.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
+        }
 
-        val qualsText = view.findViewById<TextView>(R.id.qualifications_field)
-        qualsText.append("${pantry?.prereq}")
+        map?.setOnMapLoadedCallback {
+            view?.findViewById<MapView>(R.id.fragment_details_map_view)?.visibility = View.VISIBLE
+            view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)?.visibility = View.GONE
+        }
+    }
 
-        val infoText = view.findViewById<TextView>(R.id.info_field)
-        infoText.append("${pantry?.info}")
+    private fun fillDetails(view: View?, pantry: Pantry?) {
+        val addressText = view?.findViewById<TextView>(R.id.address_field)
+        addressText?.append("${pantry?.address} ${pantry?.city}")
+
+        val availabilityText = view?.findViewById<TextView>(R.id.availability_field)
+        availabilityText?.append("${pantry?.days} ${pantry?.hours}")
+
+        val qualificationsText = view?.findViewById<TextView>(R.id.qualifications_field)
+        qualificationsText?.append("${pantry?.prereq}")
+
+        val infoText = view?.findViewById<TextView>(R.id.info_field)
+        infoText?.append("${pantry?.info}")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mMapView?.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mMapView?.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMapView?.onStop()
     }
 
     override fun onDestroyView() {
-        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
         super.onDestroyView()
+        mMapView?.onDestroy()
+        mMapView = null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mMapView?.onSaveInstanceState(outState)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mMapView?.onLowMemory()
     }
 
     companion object {

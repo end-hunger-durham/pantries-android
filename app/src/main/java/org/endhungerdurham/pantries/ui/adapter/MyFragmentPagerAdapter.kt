@@ -3,16 +3,16 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import org.endhungerdurham.pantries.ui.MapFragment
-import org.endhungerdurham.pantries.ui.PantriesFragment
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.container.RootListFragment
+import org.endhungerdurham.pantries.ui.container.RootMapFragment
 import java.lang.RuntimeException
 
 const val MAP_PAGE = 0
 const val LIST_PAGE = 1
+const val PAGE_COUNT = 2
 
 class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPagerAdapter(fm) {
-    internal val PAGE_COUNT = 2
     private val tabTitles = mapOf(MAP_PAGE to context.getString(R.string.map), LIST_PAGE to context.getString(R.string.pantries))
 
     override fun getCount(): Int {
@@ -20,10 +20,10 @@ class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : FragmentPa
     }
 
     override fun getItem(position: Int): Fragment {
-        when (position) {
-            MAP_PAGE -> return MapFragment()
-            LIST_PAGE -> return PantriesFragment()
-            else -> throw RuntimeException("Invalid tab position: ${position}")
+        return when (position) {
+            MAP_PAGE -> RootMapFragment()
+            LIST_PAGE -> RootListFragment()
+            else -> throw RuntimeException("Invalid tab position: $position")
         }
     }
 

@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries.ui
+package org.endhungerdurham.pantries.ui.container
 
 import android.support.v4.app.Fragment
 import android.os.Bundle
@@ -6,17 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.ui.ListFragment
 
-class PantriesFragment : Fragment() {
+class RootListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.frament_pantries, container, false)
+        val view = inflater.inflate(R.layout.root_list_fragment, container, false)
 
-        // Initialize pantries fragment with pantries list if fresh instance
         if (savedInstanceState == null) {
             val transaction = fragmentManager?.beginTransaction()
-            transaction?.replace(R.id.pantries_frame, ListFragment())
+            transaction?.replace(R.id.root_list_fragment, ListFragment())
             transaction?.commit()
         }
 

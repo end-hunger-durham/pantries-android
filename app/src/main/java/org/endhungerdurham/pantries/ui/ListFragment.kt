@@ -4,23 +4,26 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.DividerItemDecoration.VERTICAL
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
 import android.view.*
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
 import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
-private const val KEY_SEARCH_QUERY = "search_query"
+private const val REFRESH_ANIMATION_DELAY: Long = 1000
 
 /**
  * A fragment representing a list of Items.
@@ -32,54 +35,51 @@ class ListFragment : Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var model: PantriesViewModel
-    private var mSearchQuery: String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        mSearchQuery = savedInstanceState?.getString(KEY_SEARCH_QUERY)
 
-        val swipeContainer = view.findViewById(R.id.listWrapper) as? SwipeRefreshLayout
-        swipeContainer?.setOnRefreshListener {
-            model.reloadPantries()
-            swipeContainer.isRefreshing = false
-        }
-
-        val recyclerView = view.findViewById<RecyclerView>(R.id.list)
-
-        with(recyclerView) {
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.list)?.apply {
             addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
             layoutManager = LinearLayoutManager(context)
         }
 
-        model.pantries.observe(this, Observer<List<Pantry>> { pantries ->
-            recyclerView.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
+        model.pantries.observe(viewLifecycleOwner, Observer<List<Pantry>> { pantries ->
+            recyclerView?.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
         })
 
-        model.networkState.observe(this, Observer { result ->
-            val errorLoading = view.findViewById(R.id.error) as? TextView
-            val pb = view.findViewById(R.id.pbLoading) as? ProgressBar
+        view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)?.let {
+            it.setOnRefreshListener {
+                model.reloadPantries()
+                it.isRefreshing = false
+            }
+        }
+
+        model.networkState.observe(viewLifecycleOwner, Observer { result ->
             when (result) {
-                NetworkState.SUCCESS -> {
-                    errorLoading?.visibility = TextView.GONE
-                    pb?.visibility = ProgressBar.GONE
-                }
-                NetworkState.LOADING -> pb?.visibility = ProgressBar.VISIBLE
+                NetworkState.SUCCESS -> setRefreshing(false)
+                NetworkState.LOADING -> setRefreshing(true)
                 NetworkState.FAILURE -> {
-                    errorLoading?.visibility = TextView.VISIBLE
-                    pb?.visibility = ProgressBar.GONE
+                    Toast.makeText(view?.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
+                    setRefreshing(false)
                 }
             }
         })
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.VISIBLE
     }
 
     override fun onAttach(context: Context) {
@@ -91,49 +91,22 @@ class ListFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.main_menu, menu)
-        requireActivity().title = getString(R.string.app_name)
-
-        val searchItem = menu?.findItem(R.id.action_search)
-        val searchView = searchItem?.actionView as SearchView
-        mSearchQuery?.let {
-            searchItem.expandActionView()
-            searchView.setQuery(it, false)
-            searchView.clearFocus()
-        }
-
-        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(query: String): Boolean {
-                mSearchQuery = query
-                model.filter(query)
-
-                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
-                // see https://code.google.com/p/android/issues/detail?id=24599
-                searchView.clearFocus()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (isVisible) {
-                    mSearchQuery = newText
-                    model.filter(newText)
-                }
-                return true
-            }
-        })
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     override fun onDetach() {
         super.onDetach()
         listener = null
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        if (!mSearchQuery.isNullOrEmpty()) {
-            outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
+    private fun setRefreshing(isRefreshing: Boolean) {
+        view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)?.let {
+            when (isRefreshing) {
+                false -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        delay(REFRESH_ANIMATION_DELAY)
+                        it.isRefreshing = false
+                    }
+                }
+                true -> it.isRefreshing = true
+            }
         }
     }
 

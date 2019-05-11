@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.DetailsFragment">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@id/mapView"
+    <RelativeLayout
+        android:id="@+id/fragment_details_map_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,15 +17,15 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-            android:id="@+id/mapLoading"
+            android:id="@+id/fragment_details_map_loading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleX="0.5"
             android:scaleY="0.5" />
 
-        <com.google.android.gms.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.google.android.gms.maps.MapView
             xmlns:map="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/liteMapView"
+            android:id="@+id/fragment_details_map_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             map:liteMode="true"
@@ -43,7 +43,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/address_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/phone" />
 
     <TextView
@@ -57,14 +57,14 @@
         app:autoSizeMaxTextSize="18sp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/avaialability"
+        app:layout_constraintBottom_toTopOf="@+id/availability"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.974"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/address" />
 
     <TextView
-        android:id="@+id/avaialability"
+        android:id="@+id/availability"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
@@ -74,7 +74,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/availability_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/address_field" />
 
     <TextView
@@ -90,8 +90,8 @@
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/qualifications"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
-        app:layout_constraintTop_toBottomOf="@+id/avaialability" />
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
+        app:layout_constraintTop_toBottomOf="@+id/availability" />
 
     <TextView
         android:id="@+id/qualifications"
@@ -104,7 +104,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/qualifications_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/availability_field" />
 
     <TextView
@@ -120,7 +120,7 @@
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/info"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/qualifications" />
 
     <TextView
@@ -134,7 +134,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/info_field"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/qualifications_field" />
 
     <TextView
@@ -150,7 +150,7 @@
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/info" />
 
     <Button
@@ -158,7 +158,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="?android:attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_phone"
+        android:drawableStart="@drawable/ic_baseline_local_phone_24px"
         android:drawablePadding="@dimen/text_margin"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
@@ -166,6 +166,6 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/address"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

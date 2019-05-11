@@ -62,8 +62,9 @@ class PantriesViewModel(application: Application): AndroidViewModel(application)
             mutableNetworkState.postValue(NetworkState.LOADING)
             try {
                 val json = URL(urlString).readText()
+                val parsed = JSON.parse(PantryList.serializer(), json).pantries
                 mutableNetworkState.postValue(NetworkState.SUCCESS)
-                JSON.parse(PantryList.serializer(), json).pantries
+                parsed
             } catch (e: IOException) {
                 mutableNetworkState.postValue(NetworkState.FAILURE)
                 emptyList<Pantry>()
