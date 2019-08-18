@@ -1,16 +1,18 @@
 package org.endhungerdurham.pantries.ui
 
-import android.arch.lifecycle.ViewModelProviders
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
 import android.graphics.PorterDuff
-import android.support.v7.app.AppCompatActivity
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.tabs.TabLayout
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionListener
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         val shouldEnableBack: Boolean = supportFragmentManager.backStackEntryCount > 0
         supportActionBar?.setDisplayHomeAsUpEnabled(shouldEnableBack)
 
-        val viewPager: ViewPager = findViewById(R.id.viewpager)
+        val viewPager: androidx.viewpager.widget.ViewPager = findViewById(R.id.viewpager)
         viewPager.adapter = MyFragmentPagerAdapter(supportFragmentManager, this)
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: Pantry) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.root_list_fragment, DetailsFragment.newInstance(item))
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        fragmentTransaction.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
@@ -76,12 +78,12 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         val refreshItem = menu?.findItem(R.id.action_refresh)
         val refreshIcon = ContextCompat.getDrawable(this, R.drawable.ic_baseline_cached_24px)
-        refreshIcon?.setColorFilter(ContextCompat.getColor(this, R.color.menu), PorterDuff.Mode.SRC_ATOP)
+        setColorFilter(refreshIcon, ContextCompat.getColor(this, R.color.menu))
         refreshItem?.icon = refreshIcon
 
         val searchItem = menu?.findItem(R.id.action_search)
         val searchIcon = ContextCompat.getDrawable(this, R.drawable.ic_baseline_search_24px)
-        searchIcon?.setColorFilter(ContextCompat.getColor(this, R.color.menu), PorterDuff.Mode.SRC_ATOP)
+        setColorFilter(searchIcon, ContextCompat.getColor(this, R.color.menu))
         searchItem?.icon = searchIcon
 
         val searchView = searchItem?.actionView as SearchView
@@ -126,10 +128,19 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         if (!mSearchQuery.isNullOrEmpty()) {
-            outState?.putString(KEY_SEARCH_QUERY, mSearchQuery)
+            outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
         }
         super.onSaveInstanceState(outState)
+    }
+
+    private fun setColorFilter(drawable: Drawable?, color: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            drawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
+        } else {
+            @Suppress("DEPRECATION")
+            drawable?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
+        }
     }
 }

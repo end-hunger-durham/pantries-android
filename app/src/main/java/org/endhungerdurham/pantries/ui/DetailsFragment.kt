@@ -1,21 +1,20 @@
 package org.endhungerdurham.pantries.ui
 
-import android.arch.lifecycle.ViewModelProviders
-import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.widget.Button
-import android.widget.TextView
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import android.content.Intent
 import android.net.Uri
-import android.support.design.widget.TabLayout
+import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.tabs.TabLayout
 import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
@@ -23,7 +22,7 @@ import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 private const val ARG_PANTRY = "pantry"
 private const val DEFAULT_ZOOM = 16.0f
 
-class DetailsFragment : Fragment(), OnMapReadyCallback {
+class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
     private var mMapView: MapView ?= null

@@ -40,6 +40,7 @@ data class Pantry(val organizations: String, val address: String, val city: Stri
     override fun describeContents() = 0
 
     companion object {
+        @Suppress("unused")
         @JvmField val CREATOR = object : Parcelable.Creator<Pantry> {
             override fun createFromParcel(parcel: Parcel) = Pantry(parcel)
             override fun newArray(size: Int): Array<Pantry?> = arrayOfNulls(size)
