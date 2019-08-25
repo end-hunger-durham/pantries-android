@@ -1,21 +1,23 @@
 package org.endhungerdurham.pantries.ui
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v4.app.Fragment
-import android.os.Bundle
 import android.content.pm.PackageManager
-import android.support.design.widget.TabLayout
-import android.support.v4.app.FragmentTransaction
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.view.*
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import com.google.android.gms.maps.*
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.info_window_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +37,7 @@ private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 private const val KEY_LOCATION = "location"
 
 // TODO: Change icon color depending on whether it is open/closed
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
     private var mLastLocation: CameraPosition ?= null
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
@@ -56,7 +58,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mMapView?.onCreate(savedInstanceState)
         mMapView?.getMapAsync(this)
 
-        val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.map_refresh)
+        val swipeContainer = view?.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.map_refresh)
         swipeContainer?.setOnRefreshListener(null)
         swipeContainer?.isEnabled = false
 
@@ -68,6 +70,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     Toast.makeText(view?.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
                     setRefreshing(false)
                 }
+                else -> {}
             }
         })
 
@@ -82,7 +85,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {
-        val swipeContainer = view?.findViewById<SwipeRefreshLayout>(R.id.map_refresh)
+        val swipeContainer = view?.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.map_refresh)
         when (isRefreshing) {
             false -> {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -160,8 +163,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         map?.setOnInfoWindowClickListener { marker ->
             val fragmentTransaction = fragmentManager?.beginTransaction()
-            fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
-            fragmentTransaction?.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as Pantry))
+            fragmentTransaction?.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             fragmentTransaction?.addToBackStack(null)
             fragmentTransaction?.commit()
         }

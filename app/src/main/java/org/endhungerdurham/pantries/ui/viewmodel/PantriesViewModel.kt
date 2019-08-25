@@ -1,7 +1,7 @@
 package org.endhungerdurham.pantries.ui.viewmodel
 
 import android.app.Application
-import android.arch.lifecycle.*
+import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.JSON
 import org.endhungerdurham.pantries.Pantry
@@ -67,6 +67,7 @@ class PantriesViewModel(application: Application): AndroidViewModel(application)
                 parsed
             } catch (e: IOException) {
                 mutableNetworkState.postValue(NetworkState.FAILURE)
+                @Suppress("RemoveExplicitTypeArguments") // invalid warning
                 emptyList<Pantry>()
             }
         }

@@ -1,18 +1,15 @@
 package org.endhungerdurham.pantries.ui
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.DividerItemDecoration.VERTICAL
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
+import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,7 +28,7 @@ private const val REFRESH_ANIMATION_DELAY: Long = 1000
  * [ListFragment.OnListFragmentInteractionListener] interface.
  */
 // TODO: Sort by distance
-class ListFragment : Fragment() {
+class ListFragment : androidx.fragment.app.Fragment() {
 
     private var listener: OnListFragmentInteractionListener? = null
     private lateinit var model: PantriesViewModel
@@ -46,16 +43,16 @@ class ListFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_list, container, false)
 
 
-        val recyclerView = view?.findViewById<RecyclerView>(R.id.list)?.apply {
-            addItemDecoration(DividerItemDecoration(requireContext(), VERTICAL))
-            layoutManager = LinearLayoutManager(context)
+        val recyclerView = view?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.list)?.apply {
+            addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(requireContext(), VERTICAL))
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         }
 
         model.pantries.observe(viewLifecycleOwner, Observer<List<Pantry>> { pantries ->
             recyclerView?.adapter = MyItemRecyclerViewAdapter(pantries ?: emptyList(), listener)
         })
 
-        view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)?.let {
+        view?.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.list_refresh)?.let {
             it.setOnRefreshListener {
                 model.reloadPantries()
                 it.isRefreshing = false
@@ -70,6 +67,7 @@ class ListFragment : Fragment() {
                     Toast.makeText(view?.context, requireContext().getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
                     setRefreshing(false)
                 }
+                else -> {}
             }
         })
 
@@ -97,7 +95,7 @@ class ListFragment : Fragment() {
     }
 
     private fun setRefreshing(isRefreshing: Boolean) {
-        view?.findViewById<SwipeRefreshLayout>(R.id.list_refresh)?.let {
+        view?.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.list_refresh)?.let {
             when (isRefreshing) {
                 false -> {
                     CoroutineScope(Dispatchers.Main).launch {
