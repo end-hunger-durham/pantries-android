@@ -26,7 +26,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
     private var mMapView: MapView ?= null
-    private var mPantry: Pantry?= null
+    private var mPantry: Pantry ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +42,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
         mPantry = arguments?.getParcelable(ARG_PANTRY)
+        val pantry = mPantry ?: throw RuntimeException("Pantry was not provided when it was required")
 
         mMapView = view.findViewById(R.id.fragment_details_map_view)
         mMapView?.onCreate(savedInstanceState)
@@ -49,17 +50,16 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
         mMapView?.getMapAsync(this)
 
         val phoneButton = view?.findViewById<Button>(R.id.phone)
-        val phoneData = mPantry?.phone
-        if (phoneData.isNullOrBlank()) {
+        if (pantry.phone.isNullOrBlank()) {
             phoneButton?.visibility = View.GONE
         } else {
-            phoneButton?.text = phoneData
+            phoneButton?.text = pantry.phone
             phoneButton?.setOnClickListener{
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneData, null)))
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", pantry.phone, null)))
             }
         }
 
-        fillDetails(view, mPantry)
+        fillDetails(view, pantry)
 
         return view
     }
@@ -93,18 +93,28 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun fillDetails(view: View?, pantry: Pantry?) {
+    private fun fillDetails(view: View?, pantry: Pantry) {
+        fun buildDetailsText(list: List<String?>, separator: String = "\n"): String {
+            return mutableListOf<String>().apply {
+                for (str in list) {
+                    if (!str.isNullOrBlank()) {
+                        add(str)
+                    }
+                }
+            }.joinToString(separator)
+        }
+
         val addressText = view?.findViewById<TextView>(R.id.address_field)
-        addressText?.append("${pantry?.address} ${pantry?.city}")
+        addressText?.append(buildDetailsText(listOf(pantry.address, pantry.city)))
 
         val availabilityText = view?.findViewById<TextView>(R.id.availability_field)
-        availabilityText?.append("${pantry?.days} ${pantry?.hours}")
+        availabilityText?.append(buildDetailsText(listOf(pantry.days, pantry.hours)))
 
         val qualificationsText = view?.findViewById<TextView>(R.id.qualifications_field)
-        qualificationsText?.append("${pantry?.prereq}")
+        qualificationsText?.append(pantry.prereq)
 
         val infoText = view?.findViewById<TextView>(R.id.info_field)
-        infoText?.append("${pantry?.info}")
+        infoText?.append(pantry.info)
     }
 
     override fun onResume() {
@@ -140,7 +150,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     companion object {
         @JvmStatic
-        fun newInstance(item: Pantry?) : DetailsFragment {
+        fun newInstance(item: Pantry) : DetailsFragment {
             val args = Bundle()
             args.putParcelable(ARG_PANTRY, item)
             val fragment = DetailsFragment()

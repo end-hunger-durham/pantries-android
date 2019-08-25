@@ -163,7 +163,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
         map?.setOnInfoWindowClickListener { marker ->
             val fragmentTransaction = fragmentManager?.beginTransaction()
-            fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as? Pantry))
+            fragmentTransaction?.replace(R.id.root_map_fragment, DetailsFragment.newInstance(marker.tag as Pantry))
             fragmentTransaction?.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             fragmentTransaction?.addToBackStack(null)
             fragmentTransaction?.commit()
