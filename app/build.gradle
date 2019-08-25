@@ -29,7 +29,7 @@ android {
         applicationId "org.endhungerdurham.pantries"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 6
+        versionCode 7
         versionName "0.1-alpha"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
