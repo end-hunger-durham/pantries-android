@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.endhungerdurham.pantries.R
-import org.endhungerdurham.pantries.ui.ListFragment
+import org.endhungerdurham.pantries.ui.fragment.ListFragment
 
 class RootListFragment : androidx.fragment.app.Fragment() {
 

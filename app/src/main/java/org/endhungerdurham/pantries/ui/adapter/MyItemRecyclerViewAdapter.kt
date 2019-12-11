@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_item.view.*
-import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.backend.Pantry
 import org.endhungerdurham.pantries.R
-import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.ui.fragment.ListFragment.OnListFragmentInteractionListener
 
 class MyItemRecyclerViewAdapter(
         private val mPantries: List<Pantry>,

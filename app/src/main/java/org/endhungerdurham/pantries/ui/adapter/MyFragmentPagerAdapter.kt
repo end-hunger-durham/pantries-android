@@ -9,7 +9,7 @@ const val MAP_PAGE = 0
 const val LIST_PAGE = 1
 const val PAGE_COUNT = 2
 
-class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+class MyFragmentPagerAdapter(fm: FragmentManager, context: Context) : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val tabTitles = mapOf(MAP_PAGE to context.getString(R.string.map), LIST_PAGE to context.getString(R.string.pantries))
 
     override fun getCount(): Int {

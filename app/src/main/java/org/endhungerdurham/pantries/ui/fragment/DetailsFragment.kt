@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries.ui
+package org.endhungerdurham.pantries.ui.fragment
 
 import android.content.Intent
 import android.net.Uri
@@ -15,8 +15,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.tabs.TabLayout
-import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.backend.Pantry
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val ARG_PANTRY = "pantry"
@@ -26,7 +26,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
     private var mMapView: MapView ?= null
-    private var mPantry: Pantry ?= null
+    private var mPantry: Pantry?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,9 +74,9 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
         requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
+        menu.clear()
         requireActivity().title = mPantry?.organizations ?: "Pantry"
     }
 

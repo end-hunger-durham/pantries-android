@@ -4,9 +4,9 @@ import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.JSON
-import org.endhungerdurham.pantries.Pantry
-import org.endhungerdurham.pantries.PantryList
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.backend.Pantry
+import org.endhungerdurham.pantries.backend.PantryList
 import java.io.IOException
 import java.net.URL
 

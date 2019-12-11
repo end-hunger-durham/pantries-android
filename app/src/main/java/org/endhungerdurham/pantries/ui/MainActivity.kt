@@ -13,10 +13,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
-import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
-import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.backend.Pantry
+import org.endhungerdurham.pantries.ui.fragment.ListFragment.OnListFragmentInteractionListener
 import org.endhungerdurham.pantries.ui.adapter.MyFragmentPagerAdapter
+import org.endhungerdurham.pantries.ui.fragment.DetailsFragment
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val KEY_SEARCH_QUERY = "search_query"

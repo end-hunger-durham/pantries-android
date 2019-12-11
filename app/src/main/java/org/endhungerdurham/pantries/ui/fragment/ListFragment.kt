@@ -1,4 +1,4 @@
-package org.endhungerdurham.pantries.ui
+package org.endhungerdurham.pantries.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.endhungerdurham.pantries.Pantry
+import org.endhungerdurham.pantries.backend.Pantry
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.ui.adapter.MyItemRecyclerViewAdapter
 import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
