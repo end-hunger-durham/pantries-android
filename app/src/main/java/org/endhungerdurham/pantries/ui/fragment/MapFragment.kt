@@ -23,8 +23,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.endhungerdurham.pantries.backend.Pantry
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.backend.Pantry
+import org.endhungerdurham.pantries.ui.utils.startGoogleMapsIntent
 import org.endhungerdurham.pantries.ui.viewmodel.NetworkState
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
@@ -42,6 +43,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
     private var mLocationPermissionGranted: Boolean = false
     private var mMap: GoogleMap ?= null
     private var mMapView: MapView ?= null
+    private var mDirectionsButton: View ?= null
     private lateinit var model: PantriesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +56,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_map, container, false)
 
+        mDirectionsButton = rootView.findViewById(R.id.directions_button)
         mMapView = rootView.findViewById(R.id.fragment_map_view)
         mMapView?.onCreate(savedInstanceState)
         mMapView?.getMapAsync(this)
@@ -135,6 +138,8 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap?) {
         mMap = map
+        map?.uiSettings?.isMapToolbarEnabled = false
+
         updateMyLocationUI()
 
         val cameraPosition = mLastLocation ?: CameraPosition.Builder().target(DURHAM_NC).zoom(DEFAULT_ZOOM).build()
@@ -167,6 +172,30 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
             fragmentTransaction?.setTransition(androidx.fragment.app.FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
             fragmentTransaction?.addToBackStack(null)
             fragmentTransaction?.commit()
+        }
+
+        map?.setOnMarkerClickListener { marker ->
+            // these are the functions called by the default listener
+            marker.showInfoWindow()
+            map.animateCamera(CameraUpdateFactory.newLatLng(marker.position))
+
+            // display our floating action button that fires custom Google Map intents
+            // for the big map screen, we want to only show the directions button when the marker
+            // is pressed.
+            mDirectionsButton?.let { button ->
+                val pantry: Pantry? = marker.tag as? Pantry
+                if (pantry != null) {
+                    button.visibility = View.VISIBLE
+                    button.setOnClickListener {
+                        startGoogleMapsIntent(pantry, requireContext())
+                    }
+                }
+            }
+            true
+        }
+
+        map?.setOnMapClickListener {
+            mDirectionsButton?.visibility = View.GONE
         }
 
         model.pantries.observe(viewLifecycleOwner, Observer<List<Pantry>> { pantries ->

@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.tabs.TabLayout
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.backend.Pantry
+import org.endhungerdurham.pantries.ui.utils.startGoogleMapsIntent
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val ARG_PANTRY = "pantry"
@@ -26,7 +27,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
     private var mMapView: MapView ?= null
-    private var mPantry: Pantry?= null
+    private lateinit var mPantry: Pantry
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +42,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-        mPantry = arguments?.getParcelable(ARG_PANTRY)
-        val pantry = mPantry ?: throw RuntimeException("Pantry was not provided when it was required")
+        mPantry = arguments?.getParcelable(ARG_PANTRY) ?: throw RuntimeException("Error: Pantry data missing from DetailsFragment")
 
         mMapView = view.findViewById(R.id.fragment_details_map_view)
         mMapView?.onCreate(savedInstanceState)
@@ -50,16 +50,16 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
         mMapView?.getMapAsync(this)
 
         val phoneButton = view?.findViewById<Button>(R.id.phone)
-        if (pantry.phone.isNullOrBlank()) {
+        if (mPantry.phone.isNullOrBlank()) {
             phoneButton?.visibility = View.GONE
         } else {
-            phoneButton?.text = pantry.phone
+            phoneButton?.text = mPantry.phone
             phoneButton?.setOnClickListener{
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", pantry.phone, null)))
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", mPantry.phone, null)))
             }
         }
 
-        fillDetails(view, pantry)
+        fillDetails(view, mPantry)
 
         return view
     }
@@ -77,20 +77,30 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
-        requireActivity().title = mPantry?.organizations ?: "Pantry"
+        requireActivity().title = mPantry.organizations
     }
 
     override fun onMapReady(map: GoogleMap?) {
-        mPantry?.let { pantry ->
-            val pos = LatLng(pantry.latitude, pantry.longitude)
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
-            map?.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
-        }
+        map?.uiSettings?.isMapToolbarEnabled = false
 
         map?.setOnMapLoadedCallback {
             view?.findViewById<MapView>(R.id.fragment_details_map_view)?.visibility = View.VISIBLE
             view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)?.visibility = View.GONE
         }
+
+        map?.setOnMarkerClickListener {
+            startGoogleMapsIntent(mPantry, requireContext())
+            true
+        }
+
+        map?.setOnMapClickListener {
+            startGoogleMapsIntent(mPantry, requireContext())
+        }
+
+        // Map setup
+        val pos = LatLng(mPantry.latitude, mPantry.longitude)
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
+        map?.addMarker(MarkerOptions().position(pos).title(mPantry.organizations))
     }
 
     private fun fillDetails(view: View?, pantry: Pantry) {
