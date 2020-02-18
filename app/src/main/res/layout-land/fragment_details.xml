@@ -153,19 +153,39 @@
         app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/info" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/phone"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_baseline_local_phone_24px"
-        android:drawablePadding="@dimen/text_margin"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:textAlignment="textStart"
+        android:drawableTop="@drawable/ic_baseline_local_phone_24px"
+        android:padding="8dp"
+        android:text="@string/call"
+        android:textAlignment="center"
+        android:textAllCaps="false"
         android:textSize="18sp"
+        app:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/address"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/directions"
         app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/directions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:drawableTop="@drawable/ic_directions_24px"
+        android:padding="8dp"
+        android:text="@string/directions"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/address"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/phone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

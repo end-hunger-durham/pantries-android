@@ -25,7 +25,8 @@
             android:layout_margin="16dp"
             android:contentDescription="@string/directions"
             android:src="@drawable/ic_directions_24px"
+            android:tint="@android:color/white"
             android:visibility="gone"
-            app:backgroundTint="@android:color/white" />
+            app:backgroundTint="@color/colorPrimary" />
     </FrameLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
