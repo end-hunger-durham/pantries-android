@@ -20,7 +20,7 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/pantries" />
+            android:text="@string/list" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"

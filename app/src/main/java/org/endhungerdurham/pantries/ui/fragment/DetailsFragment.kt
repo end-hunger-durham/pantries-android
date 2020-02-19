@@ -1,6 +1,7 @@
 package org.endhungerdurham.pantries.ui.fragment
 
 import android.content.Intent
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
@@ -106,16 +107,11 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
             }.joinToString(separator)
         }
 
-        val phoneButton = view?.findViewById<Button>(R.id.phone)
-        if (mPantry.phone.isNullOrBlank()) {
-            phoneButton?.visibility = View.GONE
-        } else {
-            // change phone icon to white
-            val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_baseline_local_phone_24px)
-            setColorFilter(icon, ContextCompat.getColor(requireContext(), R.color.details_phone_icon))
-            phoneButton?.setCompoundDrawablesRelativeWithIntrinsicBounds(null, icon, null, null)
+        view?.findViewById<TextView>(R.id.phone_number_field)?.let { textView ->
+            textView.text = mPantry.phone
+            textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-            phoneButton?.setOnClickListener{
+            textView.setOnClickListener{
                 startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", mPantry.phone, null)))
             }
         }
@@ -125,6 +121,10 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
             val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_directions_24px)
             setColorFilter(icon, ContextCompat.getColor(requireContext(), R.color.details_directions_icon))
             button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+
+            button.setOnClickListener {
+                startGoogleMapsIntent(mPantry, requireContext())
+            }
         }
 
         val addressText = view?.findViewById<TextView>(R.id.address_field)

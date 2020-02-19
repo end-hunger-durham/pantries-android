@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.DetailsFragment">
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/fragment_details_map_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -30,7 +30,19 @@
             android:layout_height="match_parent"
             map:liteMode="true"
             map:mapType="normal" />
-    </RelativeLayout>
+
+        <Button
+            android:id="@+id/directions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:drawableStart="@drawable/ic_directions_24px"
+            android:drawablePadding="4dp"
+            android:text="@string/directions"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/address"
@@ -44,7 +56,7 @@
         app:layout_constraintBottom_toTopOf="@+id/address_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
-        app:layout_constraintTop_toBottomOf="@+id/phone" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/address_field"
@@ -88,10 +100,46 @@
         app:autoSizeMaxTextSize="18sp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toTopOf="@+id/qualifications"
+        app:layout_constraintBottom_toTopOf="@+id/phone_number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/availability" />
+
+    <TextView
+        android:id="@+id/phone_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:text="@string/phone_number"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/phone_number_field_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
+        app:layout_constraintTop_toBottomOf="@+id/availability_field" />
+
+    <FrameLayout
+        android:id="@+id/phone_number_field_wrapper"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/qualifications"
+        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phone_number">
+        <TextView
+            android:id="@+id/phone_number_field"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textIsSelectable="true"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_blue_dark"
+            app:autoSizeMaxTextSize="18sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/qualifications"
@@ -105,7 +153,7 @@
         app:layout_constraintBottom_toTopOf="@+id/qualifications_field"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
-        app:layout_constraintTop_toBottomOf="@+id/availability_field" />
+        app:layout_constraintTop_toBottomOf="@+id/phone_number_field_wrapper" />
 
     <TextView
         android:id="@+id/qualifications_field"
@@ -152,40 +200,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
         app:layout_constraintTop_toBottomOf="@+id/info" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/phone"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:drawableTop="@drawable/ic_baseline_local_phone_24px"
-        android:padding="8dp"
-        android:text="@string/call"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/address"
-        app:layout_constraintEnd_toStartOf="@+id/directions"
-        app:layout_constraintStart_toEndOf="@+id/fragment_details_map_wrapper"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/directions"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:drawableTop="@drawable/ic_directions_24px"
-        android:padding="8dp"
-        android:text="@string/directions"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/phone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
