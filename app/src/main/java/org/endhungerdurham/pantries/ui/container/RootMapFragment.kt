@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import org.endhungerdurham.pantries.R
-import org.endhungerdurham.pantries.ui.MapFragment
+import org.endhungerdurham.pantries.ui.fragment.MapFragment
 
 class RootMapFragment : androidx.fragment.app.Fragment() {
 

@@ -2,9 +2,12 @@
     <string name="address">Address</string>
     <string name="app_name">Durham Food Resources</string>
     <string name="availability">Availability</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="directions">Directions</string>
+    <string name="expand_details">Expand Details</string>
     <string name="info">Additional Info</string>
     <string name="map">Map</string>
-    <string name="pantries">Pantries</string>
+    <string name="list">List</string>
     <string name="pantries_json_url">https://raw.githubusercontent.com/end-hunger-durham/data-importer/master/pantries.json</string>
     <string name="qualifications">Qualifications</string>
     <string name="search">Search</string>

@@ -1,12 +1,14 @@
-package org.endhungerdurham.pantries.ui
+package org.endhungerdurham.pantries.ui.fragment
 
 import android.content.Intent
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -15,8 +17,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.tabs.TabLayout
-import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
+import org.endhungerdurham.pantries.backend.Pantry
+import org.endhungerdurham.pantries.ui.utils.setColorFilter
+import org.endhungerdurham.pantries.ui.utils.startGoogleMapsIntent
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val ARG_PANTRY = "pantry"
@@ -26,7 +30,7 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     private lateinit var model: PantriesViewModel
     private var mMapView: MapView ?= null
-    private var mPantry: Pantry ?= null
+    private lateinit var mPantry: Pantry
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,25 +45,14 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
         val view = inflater.inflate(R.layout.fragment_details, container, false)
 
-        mPantry = arguments?.getParcelable(ARG_PANTRY)
-        val pantry = mPantry ?: throw RuntimeException("Pantry was not provided when it was required")
+        mPantry = arguments?.getParcelable(ARG_PANTRY) ?: throw RuntimeException("Error: Pantry data missing from DetailsFragment")
 
         mMapView = view.findViewById(R.id.fragment_details_map_view)
         mMapView?.onCreate(savedInstanceState)
         mMapView?.visibility = View.INVISIBLE
         mMapView?.getMapAsync(this)
 
-        val phoneButton = view?.findViewById<Button>(R.id.phone)
-        if (pantry.phone.isNullOrBlank()) {
-            phoneButton?.visibility = View.GONE
-        } else {
-            phoneButton?.text = pantry.phone
-            phoneButton?.setOnClickListener{
-                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", pantry.phone, null)))
-            }
-        }
-
-        fillDetails(view, pantry)
+        fillDetails(view, mPantry)
 
         return view
     }
@@ -74,23 +67,33 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
         requireActivity().findViewById<TabLayout>(R.id.sliding_tabs).visibility = View.GONE
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
-        requireActivity().title = mPantry?.organizations ?: "Pantry"
+        menu.clear()
+        requireActivity().title = mPantry.organizations
     }
 
     override fun onMapReady(map: GoogleMap?) {
-        mPantry?.let { pantry ->
-            val pos = LatLng(pantry.latitude, pantry.longitude)
-            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
-            map?.addMarker(MarkerOptions().position(pos).title(pantry.organizations))
-        }
+        map?.uiSettings?.isMapToolbarEnabled = false
 
         map?.setOnMapLoadedCallback {
             view?.findViewById<MapView>(R.id.fragment_details_map_view)?.visibility = View.VISIBLE
             view?.findViewById<ProgressBar>(R.id.fragment_details_map_loading)?.visibility = View.GONE
         }
+
+        map?.setOnMarkerClickListener {
+            startGoogleMapsIntent(mPantry, requireContext())
+            true
+        }
+
+        map?.setOnMapClickListener {
+            startGoogleMapsIntent(mPantry, requireContext())
+        }
+
+        // Map setup
+        val pos = LatLng(mPantry.latitude, mPantry.longitude)
+        map?.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, DEFAULT_ZOOM))
+        map?.addMarker(MarkerOptions().position(pos).title(mPantry.organizations))
     }
 
     private fun fillDetails(view: View?, pantry: Pantry) {
@@ -102,6 +105,26 @@ class DetailsFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
                     }
                 }
             }.joinToString(separator)
+        }
+
+        view?.findViewById<TextView>(R.id.phone_number_field)?.let { textView ->
+            textView.text = mPantry.phone
+            textView.paintFlags = textView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+            textView.setOnClickListener{
+                startActivity(Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", mPantry.phone, null)))
+            }
+        }
+
+        view?.findViewById<Button>(R.id.directions)?.let { button ->
+            // change directions icon to white
+            val icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_directions_24px)
+            setColorFilter(icon, ContextCompat.getColor(requireContext(), R.color.details_directions_icon))
+            button.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null)
+
+            button.setOnClickListener {
+                startGoogleMapsIntent(mPantry, requireContext())
+            }
         }
 
         val addressText = view?.findViewById<TextView>(R.id.address_field)

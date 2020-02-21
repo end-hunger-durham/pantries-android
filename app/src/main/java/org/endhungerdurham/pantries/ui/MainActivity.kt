@@ -1,10 +1,5 @@
 package org.endhungerdurham.pantries.ui
 
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.PorterDuff
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,10 +8,12 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
-import org.endhungerdurham.pantries.Pantry
 import org.endhungerdurham.pantries.R
-import org.endhungerdurham.pantries.ui.ListFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.backend.Pantry
 import org.endhungerdurham.pantries.ui.adapter.MyFragmentPagerAdapter
+import org.endhungerdurham.pantries.ui.fragment.DetailsFragment
+import org.endhungerdurham.pantries.ui.fragment.ListFragment.OnListFragmentInteractionListener
+import org.endhungerdurham.pantries.ui.utils.setColorFilter
 import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val KEY_SEARCH_QUERY = "search_query"
@@ -133,14 +130,5 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
             outState.putString(KEY_SEARCH_QUERY, mSearchQuery)
         }
         super.onSaveInstanceState(outState)
-    }
-
-    private fun setColorFilter(drawable: Drawable?, color: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            drawable?.colorFilter = BlendModeColorFilter(color, BlendMode.SRC_ATOP)
-        } else {
-            @Suppress("DEPRECATION")
-            drawable?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
-        }
     }
 }

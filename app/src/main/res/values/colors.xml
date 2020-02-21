@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="menu">#FFFFFF</color>
+    <color name="details_directions_icon">#FFFFFF</color>
+    <color name="details_phone_icon">#FFFFFF</color>
 </resources>
