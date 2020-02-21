@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.backend.Pantry
+import org.endhungerdurham.pantries.ui.adapter.LIST_PAGE
+import org.endhungerdurham.pantries.ui.adapter.MAP_PAGE
 import org.endhungerdurham.pantries.ui.adapter.MyFragmentPagerAdapter
 import org.endhungerdurham.pantries.ui.fragment.DetailsFragment
 import org.endhungerdurham.pantries.ui.fragment.ListFragment.OnListFragmentInteractionListener
@@ -42,6 +44,14 @@ class MainActivity : AppCompatActivity(), OnListFragmentInteractionListener {
 
         val tabLayout: TabLayout = findViewById(R.id.sliding_tabs)
         tabLayout.setupWithViewPager(viewPager)
+        for (i in 0 until tabLayout.tabCount) {
+            val icon = when (i) {
+                MAP_PAGE -> R.drawable.ic_navigation_24px
+                LIST_PAGE -> R.drawable.ic_list_24px
+                else -> throw Exception("Attempt to set icon for invalid tab")
+            }
+            tabLayout.getTabAt(i)?.setIcon(icon)
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
