@@ -49,10 +49,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
-        val lastLocation: CameraPosition? = savedInstanceState?.getParcelable(KEY_LOCATION)
-        if (lastLocation != null) {
-            mLastLocation = lastLocation
-        }
+        mLastLocation = savedInstanceState?.getParcelable(KEY_LOCATION)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -230,6 +227,9 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        // Handles edge cases of map camera position
+        // https://stackoverflow.com/questions/15313598/how-to-correctly-save-instance-state-of-fragments-in-back-stack#comment25351288_15314508
         mLastLocation = mMap?.cameraPosition
         mMap?.clear()
         mMapView?.onDestroy()
