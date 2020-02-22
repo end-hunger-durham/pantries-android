@@ -17,7 +17,7 @@ const val PAGE_COUNT = 2
 
 class MyFragmentPagerAdapter(fm: FragmentManager, val context: Context) : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val tabTitles = mapOf(MAP_PAGE to context.getString(R.string.map), LIST_PAGE to context.getString(R.string.list))
-    private val tabIcons = mapOf(MAP_PAGE to R.drawable.ic_navigation_24px, LIST_PAGE to R.drawable.ic_list_24px)
+    private val tabIcons = arrayOf(R.drawable.ic_navigation_24px, R.drawable.ic_list_24px)
 
     override fun getCount(): Int {
         return PAGE_COUNT
@@ -32,16 +32,12 @@ class MyFragmentPagerAdapter(fm: FragmentManager, val context: Context) : androi
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        val icon = when (position) {
-            MAP_PAGE -> ContextCompat.getDrawable(context, R.drawable.ic_navigation_24px)
-            LIST_PAGE -> ContextCompat.getDrawable(context, R.drawable.ic_list_24px)
-            else -> throw java.lang.RuntimeException("Invalid tab position: $position")
-        }
-        return icon?.let {
-            it.setBounds(0, 0, it.intrinsicWidth, it.intrinsicHeight)
+        return ContextCompat.getDrawable(context, tabIcons[position])?.let { drawable ->
+            drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
 
-            val spannable = SpannableString("   " + tabTitles[position])
-            val imageSpan = VerticalImageSpan(it)
+            // Create a title string that includes our tab icon at the beginning of the string
+            val spannable = SpannableString("    " + tabTitles[position])
+            val imageSpan = VerticalImageSpan(drawable)
             spannable.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             spannable
         }
