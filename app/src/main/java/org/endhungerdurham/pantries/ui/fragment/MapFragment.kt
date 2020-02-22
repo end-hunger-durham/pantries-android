@@ -31,7 +31,7 @@ import org.endhungerdurham.pantries.ui.viewmodel.PantriesViewModel
 
 private const val REFRESH_ANIMATION_DELAY: Long = 1000
 private const val DEFAULT_ZOOM = 11.5f
-private val DURHAM_NC: LatLng = LatLng(35.9940, -78.8986)
+private val DURHAM_NC: LatLng = LatLng(35.996543666002445, -78.90108037808307)
 
 private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
@@ -49,7 +49,10 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProviders.of(requireActivity()).get(PantriesViewModel::class.java)
-        mLastLocation = savedInstanceState?.getParcelable(KEY_LOCATION)
+        val lastLocation: CameraPosition? = savedInstanceState?.getParcelable(KEY_LOCATION)
+        if (lastLocation != null) {
+            mLastLocation = lastLocation
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -183,8 +186,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
             // for the big map screen, we want to only show the directions button when the marker
             // is pressed.
             mDirectionsButton?.let { button ->
-                val pantry: Pantry? = marker.tag as? Pantry
-                if (pantry != null) {
+                (marker.tag as? Pantry)?.let { pantry ->
                     button.visibility = View.VISIBLE
                     button.setOnClickListener {
                         startGoogleMapsIntent(pantry, requireContext())
@@ -228,6 +230,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        mLastLocation = mMap?.cameraPosition
         mMap?.clear()
         mMapView?.onDestroy()
         mMap = null
@@ -240,9 +243,7 @@ class MapFragment : androidx.fragment.app.Fragment(), OnMapReadyCallback {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        mMap?.cameraPosition?.let {
-            outState.putParcelable(KEY_LOCATION, it)
-        }
+        outState.putParcelable(KEY_LOCATION, mLastLocation ?: mMap?.cameraPosition)
         super.onSaveInstanceState(outState)
         mMapView?.onSaveInstanceState(outState)
     }
