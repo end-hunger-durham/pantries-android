@@ -3,7 +3,8 @@ package org.endhungerdurham.pantries.ui.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.*
-import kotlinx.serialization.json.JSON
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import org.endhungerdurham.pantries.R
 import org.endhungerdurham.pantries.backend.Pantry
 import org.endhungerdurham.pantries.backend.PantryList
@@ -61,8 +62,9 @@ class PantriesViewModel(application: Application): AndroidViewModel(application)
         return withContext(Dispatchers.IO) {
             mutableNetworkState.postValue(NetworkState.LOADING)
             try {
-                val json = URL(urlString).readText()
-                val parsed = JSON.parse(PantryList.serializer(), json).pantries
+                val json = Json(JsonConfiguration.Stable)
+                val jsonData = URL(urlString).readText()
+                val parsed = json.parse(PantryList.serializer(), jsonData).pantries
                 mutableNetworkState.postValue(NetworkState.SUCCESS)
                 parsed
             } catch (e: IOException) {
